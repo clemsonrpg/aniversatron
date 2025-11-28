@@ -1,6 +1,6 @@
 from django.db import models
-from alunos.models import Aluno
-from livros.models import Livro
+from apps.alunos.models import Aluno
+from apps.livros.models import Livro
 from datetime import date
 
 class Emprestimo(models.Model):
