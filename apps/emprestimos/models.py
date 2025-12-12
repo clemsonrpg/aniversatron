@@ -7,7 +7,8 @@ class Emprestimo(models.Model):
     aluno_id = models.ForeignKey(Aluno, verbose_name='Aluno', on_delete=models.CASCADE)
     livro_id = models.ForeignKey(Livro, verbose_name='Livro',on_delete=models.CASCADE)
     data_emprestimo = models.DateTimeField(verbose_name='Data Empréstimo', auto_now_add=True)
-    data_devolucao = models.DateField(verbose_name='Data Devolução', default=date.today)
+    data_devolucao = models.DateField(verbose_name='Data Devolução', default=date.today,
+        help_text="Data em que o livro foi devolvido.")
     data_prevista_devolucao = models.DateField(verbose_name='Previsão devolução')
     status = models.CharField(max_length=1, choices=[('E','Emprestado'), ('D','Devolvido')])
 
