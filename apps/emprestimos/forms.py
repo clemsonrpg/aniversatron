@@ -14,12 +14,12 @@ class EmprestimoForm(forms.ModelForm):
                 format=('%d/%m/%Y'),
                 attrs={'class': 'form-control',
                        'placeholder': 'Selecione uma data',
-                       'type': 'date'  # <--- IF I REMOVE THIS LINE, THE INITIAL VALUE IS DISPLAYED
+                       'type': 'date'
                        }),
             'data_prevista_devolucao': forms.DateInput(
                 format=('%d/%m/%Y'),
                 attrs={'class': 'form-control',
                        'placeholder': 'Selecione uma data',
-                       'type': 'date'  # <--- IF I REMOVE THIS LINE, THE INITIAL VALUE IS DISPLAYED
+                       'type': 'date'
                        }),
         }

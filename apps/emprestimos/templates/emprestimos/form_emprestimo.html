@@ -27,12 +27,12 @@
                 <div class="container">
                     <div class="p-1 mb-2 bg-light text-dark">
                         <div class="form-row">
-                            <div class="col-md-8">
+                            <div class="col-md-5">
                                 {{ form.aluno_id.errors }}
                                 <label><strong>Aluno: </strong></label>
                                 {{ form.aluno_id|add_class:"form-control" }}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-7">
                                 {{ form.livro_id.errors }}
                                 <label><strong>Livro: </strong></label>
                                 {{ form.livro_id|add_class:'form-control' }}
@@ -49,12 +49,12 @@
                                 <label><strong>Data Devolução:</strong></label>
                                 {{ form.data_devolucao|add_class:'form-control'  }}
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 {{ form.data_prevista_devolucao.erros }}
                                 <label><strong>Data Prev. Devolução:</strong></label>
                                 {{ form.data_prevista_devolucao|add_class:'form-control' }}
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 {{ form.status.erros }}
                                 <label><strong>Status:</strong></label>
                                 {{ form.status|add_class:'form-control' }}
