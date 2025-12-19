@@ -45,7 +45,11 @@
                             <td>{{ e.data_emprestimo | date:'d/m/y' }}</td>
                             <td>{{ e.data_devolucao | date:'d/m/y'  }}</td>
                             <td>{{ e.data_prevista_devolucao  | date:'d/m/Y' }}</td>
-                            <td>{{ e.get_status_display }}</td>
+                            {% if e.status == 'E' %}
+                                <td><span class="badge badge-danger">{{ e.get_status_display }}</span><td>
+                            {% else %}
+                                <td><span class="badge badge-success">{{ e.get_status_display }}</span><td>
+                            {% endif %}
                             <td>
                                 <a href="#">
                                     <i class="fa fa-search" aria-hidden="true" style="color: blue;"></i>
@@ -53,7 +57,7 @@
                                 <a href="{% url 'emprestimos:editar_emprestimo' e.id %}">
                                     <i class="fa fa-pencil-square" aria-hidden="true" style="color: #6B8E23;"></i>
                                 </a>
-                                <a href="#">
+                                <a href="{% url 'emprestimos:excluir_emprestimo' e.id  %}">
                                     <i class="fa fa-trash" aria-hidden="true" style="color: red;"></i>
                                 </a>
                             </td>

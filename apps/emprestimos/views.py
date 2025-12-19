@@ -1,3 +1,5 @@
+from tempfile import template
+
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 
@@ -32,5 +34,15 @@ def editar_emprestimo(request, id):
     if form.is_valid():
         form.save()
         messages.success(request, 'Os dados foram atualizados com sucesso.')
+        return redirect('emprestimos:listar_emprestimos')
+    return render(request, template_name, context)
+
+def excluir_emprestimo(request, id):
+    template_name = 'emprestimos/excluir_emprestimo.html'
+    emprestimo = Emprestimo.objects.get(id=id)
+    context = {'emprestimo': emprestimo}
+    if request.method == 'POST':
+        emprestimo.delete()
+        messages.error(request, 'O Empréstimo foi excluído com sucesso')
         return redirect('emprestimos:listar_emprestimos')
     return render(request, template_name, context)
