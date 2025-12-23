@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Empréstimo</title>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<div class="card">
+    <div class="card-header">
+        Tem certeza que deseja excluir os dados do Empréstimo abaixo?
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Id: {{ emprestimo.id }}</h5>
+        <h5 class="card-title">Aluno(a): {{ emprestimo.aluno_id }}</h5>
+        <h5 class="card-title">Livro: {{ emprestimo.livro_id }}</h5>
+        <h5 class="card-title">Data do Empréstimo: {{ emprestimo.data_emprestimo | date:'d/m/Y' }}</h5>
+        <h5 class="card-title">Status: {{ emprestimo.get_status_display }}</h5>
+
+        <form method="post">
+             {% csrf_token %}
+            <button class="btn btn-danger" type="submit">Remover</button>
+            <a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary">Voltar</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+
