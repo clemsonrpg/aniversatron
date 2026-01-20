@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de usuários</title>
+</head>
+<body>
+    <form action="{% url 'usuarios:inserir_usuario' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" placeholder="Nome do usuário ..." name="username">
+        <br>
+        <br>
+        <input type="email" placeholder="E-mail ..." name="email">
+        <br>
+        <br>
+        <input type="password" placeholder="Senha do usuário ..." name="senha">
+        <br>
+        <br>
+        <input type="submit" value="Cadastrar">
+    </form>
+<h1>Cadastro de usuários</h1>
+</body>
+</html>
