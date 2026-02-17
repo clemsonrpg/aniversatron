@@ -1,13 +1,17 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import login as auth_login
 
 
+@login_required(login_url='usuarios:login')
 def index(request):
     return render(request, 'usuarios/index.html')
 
-
+@login_required(login_url='usuarios:login')
 def inserir_usuario(request):
     if request.method == 'GET':
         return render(request, 'usuarios/inserir_usuario.html')
@@ -23,7 +27,8 @@ def inserir_usuario(request):
 
         user = User.objects.create_user(username=username, email=email, password=senha, is_active=False, is_staff=True)
         user.save()
-        return HttpResponse('Usuário cadastrado com sucesso.')
+        messages.success(request, "Usuário cadastrado com sucesso.")
+
 
 def login(request):
     if request.method == 'GET':
@@ -41,8 +46,13 @@ def login(request):
             # Correction 2: Use Django's built-in login function to establish a session
             auth_login(request, user)
             # Correction 3: Redirect the user after successful login
-            return redirect('index')
+            return redirect(request.GET.get('next', '/'))
         else:
             # Handle invalid credentials
-            return HttpResponse('Email ou senha inválido.')
+            messages.error(request, "Usuário ou senha inválidos")
 
+
+@login_required(login_url='usuarios:login')
+def logout(request):
+    auth_logout(request)
+    return redirect('usuarios:login')
