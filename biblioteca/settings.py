@@ -35,7 +35,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'crispy_forms',
-    'bootstrap5',
+    'crispy_bootstrap5',
     'widget_tweaks',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,11 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'apps.alunos',
-    'apps.livros',
-    'apps.emprestimos',
+    'apps.pessoas',
     'apps.core',
-    'apps.usuarios',
 ]
 
 MIDDLEWARE = [
@@ -153,4 +150,5 @@ MESSAGE_TAGS = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CRISPY_TEMPLATE_PACK = 'bootstrap5'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

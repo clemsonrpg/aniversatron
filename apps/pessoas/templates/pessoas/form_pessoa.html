@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block conteudo %}
+<body>
+    <div class="row">
+        <div class="col-12"></div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fa fa-users"></i> Cadastro de Pessoas</h2>
+            {% include 'partials/messages.html' %}
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="container">
+                    <div class="p-1 mb-2 bg-light text-dark">
+                        <div class="form-row p-2">
+                            <div class="col-md-10">
+                                {{ form.nome.errors }}
+                                <label><strong>Nome Completo: </strong></label>
+                                {{ form.nome|add_class:"form-control" }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ form.data_nascimento.errors }}
+                                <label><strong>Data de Nascimento: </strong></label>
+                                {{ form.data_nascimento|add_class:'form-control' }}
+                            </div>
+                        </div>
+                            <div class="p-1 mb-2 bg-light text-dark">
+                        <div class="form-row p-2 ">
+                            <div class="col-md-4 ">
+                                {{ form.email.errors }}
+                                <label><strong>Email: </strong></label>
+                                {{ form.email|add_class:'form-control' }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ form.telefone.errors }}
+                                <label><strong>Telefone:</strong></label>
+                                {{ form.telefone|add_class:'form-control' }}
+                            </div>
+                            <div class="col-md-2 mb-0">
+                                {{ form.estado.errors }}
+                                <label><strong>Estado:</strong></label>
+                                {{ form.estado|add_class:'form-control'  }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.endereco.errors }}
+                                <label><strong>Endereço:</strong></label>
+                                {{ form.endereco|add_class:'form-control' }}
+                            </div>  
+                        </div>
+                    </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="container">
+
+
+                <br>
+                <div class="container">
+                    <div class="p-1 mb-2 bg-light text-dark">
+                        <div class="form-row">
+                            <div class="col-md-12">
+                               <a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary">Voltar</a>
+                               <button type="submit" class="btn btn-success">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" ></script>
+</body>
+{% endblock conteudo %}

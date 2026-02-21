@@ -1,113 +1,71 @@
 {% extends 'base.html' %}
 
+{% load widget_tweaks %}
+
 {% block conteudo %}
-<div class="content-wrapper">
-    <div class="container-fluid">
-
-        <!-- Breadcrumb -->
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="{% url 'index' %}">Home</a>
-            </li>
-            <li class="breadcrumb-item">
-                {% block bread %}{% endblock bread %}
-            </li>
-        </ol>
-
-        <!-- Cards -->
-        <div class="row">
-
-            <!-- Alunos -->
-            <div class="col-sm-3 mb-3">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <i class="fa fa-user"></i> <strong>Alunos</strong>
-                    </div>
-                    <div class="card-body text-center">
-                        <h1>{{ total_alunos }}</h1>
-                        <p class="text-muted">Alunos cadastrados</p>
-                        <a class="btn btn-success btn-sm"
-                           href="{% url 'alunos:listar_alunos' %}">
-                            <i class="fa fa-plus"></i> Cadastrar
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Livros -->
-            <div class="col-sm-3 mb-3">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <i class="fa fa-book"></i> <strong>Livros</strong>
-                    </div>
-                    <div class="card-body text-center">
-                        <h1>{{ total_livros }}</h1>
-                        <p class="text-muted">Livros cadastrados</p>
-                        <a class="btn btn-success btn-sm"
-                           href="{% url 'livros:listar_livros' %}">
-                            <i class="fa fa-plus"></i> Cadastrar
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Empréstimos -->
-            <div class="col-sm-3 mb-3">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <i class="fa fa-calendar"></i> <strong>Empréstimos</strong>
-                    </div>
-                    <div class="card-body text-center">
-                        <h1>{{ total_emprestimos }}</h1>
-                        <p class="text-muted">Empréstimos Ativos</p>
-                        <a class="btn btn-success btn-sm"
-                           href="{% url 'emprestimos:listar_emprestimos' %}">
-                            <i class="fa fa-plus"></i> Agendar
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gráfico -->
-            <div class="col-sm-3 mb-3">
-                <div class="card h-100">
-                    <div class="card-header">
-                        📊 Empréstimos por Mês
-                    </div>
-                    <div class="card-body">
-                        <canvas id="graficoEmprestimos"></canvas>
-                    </div>
-                </div>
-            </div>
-
+<body>
+    <div class="row">
+        <div class="col-12">
         </div>
     </div>
-</div>
+    <div class="card mb-3">
+        <div class="card-header">
+            <h2><i class="fa fa-list"> Listagem de Pessoas</i></h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Id</th>
+                            <th class="text-center">Nome</th>
+                            <th class="text-center">E-mail</th>
+                            <th class="text-center">Telefone</th>
+                            <th class="text-center">Estado</th>
+                            <th class="text-center">Endereço</th>
+                            <th class="text-center">Data de Nascimento</th>
+                            <th class="text-center">Dias para Aniversário</th>
+                            <th class="text-center">Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for a in pessoas %}
+                        <tr>
+                            <td class="text-center">{{ a.id }}</td>
+                            <td class="text-center">{{ a.nome }}</td>
+                            <td class="text-center">{{ a.email }}</td>
+                            <td class="text-center">{{ a.telefone }}</td>
+                            <td class="text-center">{{ a.estado }}</td>
+                            <td class="text-center">{{ a.endereco }}</td>
+                            <td class="text-center">{{ a.data_nascimento }}</td>
+                            <td class="text-center">
+                                {% if a.dias_para_aniversario == 0 %}
+                                    🎉 Hoje é aniversário!
+                                {% else %}
+                                    {{ a.dias_para_aniversario }} dias
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'pessoas:editar_pessoa' a.id %}">
+                                    <i class="fa fa-pencil-square" aria-hidden="true" style="color: #6B8E23;"></i>
+                                </a>
+                                <a href="{% url 'pessoas:excluir_pessoa' a.id %}">
+                                    <i class="fa fa-trash" aria-hidden="true" style="color: red;"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        const ctx = document.getElementById('graficoEmprestimos');
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: {{ meses|safe }},
-                datasets: [{
-                    label: 'Total de Empréstimos',
-                    data: {{ totais|safe }},
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-    </script>
-
+    <div class="col-12 card mb-3">
+        <div class="card-header">
+            <a href="{% url 'pessoas:inserir_pessoa' %}"><button class="btn btn-success">Cadastrar</button></a>
+        </div>
+    </div>
 {% endblock conteudo %}
+
+
