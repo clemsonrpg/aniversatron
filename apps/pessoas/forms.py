@@ -9,7 +9,7 @@ class PessoaForm(forms.ModelForm):
         
     class Meta:
         model = Pessoa
-        fields = '__all__'
+        fields = 'data_nascimento', 'endereco', 'email', 'telefone', 'localidade', 'nome'
         widgets = {
             'data_nascimento': forms.DateInput(
                 attrs={'type': 'date'},
@@ -17,5 +17,17 @@ class PessoaForm(forms.ModelForm):
             ),
             'endereco': forms.TextInput(
                 attrs={'placeholder': 'Digite o endereço completo'}
-            )
+            ),
+            'email': forms.EmailInput(
+                attrs={'placeholder': 'Digite o email da pessoa (se houver)'}
+            ),
+            'telefone': forms.TextInput(
+                attrs={'placeholder': 'Digite o telefone'}
+            ),
+            'localidade': forms.Select(
+                attrs={'placeholder': 'Selecione a localidade'}
+            ),
+            'nome': forms.TextInput(
+                attrs={'placeholder': 'Digite o nome completo da pessoa'}
+            ),
         }

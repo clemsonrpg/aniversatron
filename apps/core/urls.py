@@ -1,7 +1,9 @@
 from django.urls import path, include
-from .views import index
+from . import views
 
 app_name = 'apps.core'
 urlpatterns = [
-    path('', index, name="index"),
+    path('', views.index, name="index"),
+    path('relatorios/', views.relatorios, name="relatorio"),
+    path("relatorio/excel/", views.relatorio_excel, name="relatorio_excel")
 ]

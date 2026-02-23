@@ -17,7 +17,7 @@
     </div>
     <div class="card mb-3">
         <div class="card-header">
-            <h2><i class="fa fa-list"></i> Listagem de Pessoas</h2>
+            <h2><i class="fa fa-list"></i> Listagem de Serviços</h2>
         </div>
         <div class="content-wrapper">
     <div class="container-fluid">
@@ -30,7 +30,7 @@
                 {% block bread %}
             </li>
             <li class="breadcrum-item p-">
-                <a href="{% url 'pessoas:listar_pessoas' %}">Pessoas</a>
+                <a href="{% url 'servicos:listar_servicos' %}">Serviços</a>
             </li>
             <li class="breadcrumb-tiem">
                 {% endblock bread %}
@@ -44,45 +44,31 @@
                     <thead>
                         <tr>
                             <th class="text-center">Id</th>
-                            <th class="text-center">Nome</th>
-                            <th class="text-center">E-mail</th>
-                            <th class="text-center">Telefone</th>
+                            <th class="text-center">Pessoa</th>
+                            <th class="text-center">Serviço</th>
+                            <th class="text-center">Descrição</th>
                             <th class="text-center">Localidade</th>
-                            <th class="text-center">Endereço</th>
-                            <th class="text-center">Data de Nascimento</th>
-                            <th class="text-center">Ultimo Serviço Realizado</th>
+                            <th class="text-center">Data do Serviço</th>
                             <th class="text-center">Opções</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for a in pessoas %}
+                    {% for a in servicos %}
                         <tr>
                             <td class="text-center">{{ a.id }}</td>
-                            <td class="text-center"><a href="{% url 'pessoas:detalhe_pessoa' a.id %}">{{ a.nome.upper }}</a></td>
-                            <td class="text-center">{{ a.email }}</td>
-                            <td class="text-center">{{ a.telefone }}</td>
-                            <td class="text-center">{{ a.localidade }}</td>
-                            <td class="text-center">{{ a.endereco }}</td>
-                            <td class="text-center">{{ a.data_nascimento }}</td>
-                            <td class="text-center servico-coluna">
-                                {% if a.servicos_ordenados %}
-                                    {{ a.servicos_ordenados.0.nome_servico }}
-                                    <br>
-                                    <small class="text-muted">
-                                        {{ a.servicos_ordenados.0.data_servico }}
-                                    </small>
-                                {% else %}
-                                    <span class="text-muted">Nenhum serviço</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{% url 'pessoas:detalhe_pessoa' a.id %}">
+                            <td class="text-center"><a href="{% url 'pessoas:detalhe_pessoa' a.id %}">{{ a.pessoa.nome.upper }}</a></td>
+                            <td class="text-center">{{ a.nome_servico }}</td>
+                            <td class="text-center servico-coluna">{{ a.descricao }}</td>
+                            <td class="text-center">{{ a.pessoa.localidade }}</td>
+                            <td class="text-center">{{ a.data_servico }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'servicos:detalhe_servico' a.id %}">
                                     <i class="fa fa-search" aria-hidden="true" style="color: blue;"></i>
                                 </a>
-                                <a href="{% url 'pessoas:editar_pessoa' a.id %}">
+                                <a href="{% url 'servicos:editar_servico' a.id %}">
                                     <i class="fa fa-pencil-square" aria-hidden="true" style="color: #6B8E23;"></i>
                                 </a>
-                                <a href="{% url 'pessoas:excluir_pessoa' a.id %}">
+                                <a href="{% url 'servicos:excluir_servico' a.id %}">
                                     <i class="fa fa-trash" aria-hidden="true" style="color: red;"></i>
                                 </a>
                             </td>
@@ -94,9 +80,9 @@
         </div>
     </div>
     <div class="col-12 card mb-3 p-3">
-        <div class="card-header">
+        <div class="card-header ">
             <a href="{% url 'core:index' %}"><button class="btn btn-primary mr-2">Voltar</button></a>
-            <a href="{% url 'pessoas:inserir_pessoa' %}"><button class="btn btn-success">Cadastrar</button></a>
+            <a href="{% url 'servicos:inserir_servico' %}"><button class="btn btn-success">Inserir</button></a>
             
         </div>
     </div>

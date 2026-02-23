@@ -11,6 +11,7 @@ urlpatterns = [
     path('', include("apps.core.urls", namespace='core')),
     path('pessoas/', include('apps.pessoas.urls', namespace='pessoas')),
     path('admin/', admin.site.urls),
+    path('servicos/', include('apps.servicos.urls', namespace='servicos')),
 ]
 
 if settings.DEBUG:

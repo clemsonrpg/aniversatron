@@ -2,23 +2,38 @@
 
 {% block conteudo %}
 <body>
-<div class="card">
-    <div class="card-header">
-        Tem certeza que deseja remover a pessoa abaixo?
+<div class="row">
+        <div class="col-12">
+        </div>
     </div>
-    <div class="card-body">
-        <h5 class="card-title">Id: {{pessoa.id}}</h5>
-        <h5 class="card-title">Pessoa: {{pessoa.nome}}</h5>
-        <h5 class="card-title">Email: {{pessoa.email}}</h5>
-        <h5 class="card-title">Telefone: {{pessoa.telefone}}</h5>
-        <h5 class="card-title">Estado: {{pessoa.estado}}</h5>
-        <h5 class="card-title">Endereço: {{pessoa.endereco}}</h5>
+    <div class="card mb-3">
+        <div class="card-header">
+            <h2><i class="fa fa-trash"></i> Tem certeza que deseja excluir a pessoa abaixo?</h2>
+        </div>
+        <div class="container mt-4">
 
-        <form method="post">
-             {% csrf_token %}
-            <button class="btn btn-danger" type="submit">Remover</button>
-            <a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary">Voltar</a>
-        </form>
+    <div class="row">
+
+
+
+        <!-- Informações -->
+        <div class="col-md-8 ">
+            <ul class="list-group ">
+                <li class="list-group-item"><strong>Nome:</strong> {{ pessoa.nome }}</li>
+                <li class="list-group-item"><strong>Telefone:</strong> {{ pessoa.telefone }}</li>
+                <li class="list-group-item"><strong>Email:</strong> {{ pessoa.email }}</li>
+                <li class="list-group-item"><strong>Data de Nascimento:</strong> {{ pessoa.data_nascimento }}</li>
+                <li class="list-group-item"><strong>Localidade:</strong> {{ pessoa.localidade }}</li>
+                <li class="list-group-item mb-3"><strong>Endereço:</strong> {{ pessoa.endereco }}</li>
+            </ul>
+            <br>
+            <a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary mr-2 mb-5">Voltar</a>
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <button class="btn btn-danger mb-5" type="submit">Remover</button>
+            </form>
+        </div>
+
     </div>
 </div>
 </body>

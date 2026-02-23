@@ -18,40 +18,26 @@
                 <div class="container">
                     <div class="p-1 mb-2 bg-light text-dark">
                         <div class="form-row p-2">
-                            <div class="col-md-10">
-                                {{ form.nome.errors }}
-                                <label><strong>Nome Completo: </strong></label>
-                                {{ form.nome|add_class:"form-control" }}
-                            </div>
-                            <div class="col-md-2">
-                                {{ form.data_nascimento.errors }}
-                                <label><strong>Data de Nascimento: </strong></label>
-                                {{ form.data_nascimento|add_class:'form-control' }}
-                            </div>
-                        </div>
-                            <div class="p-1 mb-2 bg-light text-dark">
-                        <div class="form-row p-2 ">
-                            <div class="col-md-4">
-                                {{ form.email.errors }}
-                                <label><strong>Email: </strong></label>
-                                {{ form.email|add_class:'form-control' }}
-                            </div>
-                            <div class="col-md-2">
-                                {{ form.telefone.errors }}
-                                <label><strong>Telefone:</strong></label>
-                                {{ form.telefone|add_class:'form-control' }}
-                            </div>
-                            <div class="col-md-2 mb-0">
-                                {{ form.localidade.errors }}
-                                <label><strong>Localidade:</strong></label>
-                                {{ form.localidade|add_class:'form-control'  }}
+                            <div class="col-md-6">
+                                {{ form.pessoa.errors }}
+                                <label><strong>Pessoa: </strong></label>
+                                {{ form.pessoa|add_class:"form-control" }}
                             </div>
                             <div class="col-md-4">
-                                {{ form.endereco.errors }}
-                                <label><strong>Endereço:</strong></label>
-                                {{ form.endereco|add_class:'form-control' }}
-                            </div>  
-                        </div>
+                                {{ form.nome_servico.errors }}
+                                <label><strong>Serviço: </strong></label>
+                                {{ form.nome_servico|add_class:'form-control' }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ form.data_servico.errors }}
+                                <label><strong>Data: </strong></label>
+                                {{ form.data_servico|add_class:'form-control' }}
+                            </div>
+                            <div class="col-md-12 mt-3">
+                                {{ form.descricao.errors }}
+                                <label><strong>Descrição: </strong></label>
+                                {{ form.descricao|add_class:'form-control' }}
+                            </div>
                     </div>
 
                         </div>

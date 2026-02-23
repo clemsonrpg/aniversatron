@@ -3,69 +3,248 @@
 {% load widget_tweaks %}
 
 {% block conteudo %}
-<body>
-    <div class="row">
-        <div class="col-12">
+<div class="content-wrapper">
+    <div class="container-fluid">
+
+        <div class="card-header mt-3">
+            <h2><i class="fa fa-id-card-o"> </i> Sistema de Cadastro - Secretaria de Agricultura</h2>
         </div>
-    </div>
-    <div class="card mb-3">
-        <div class="card-header">
-            <h2><i class="fa fa-list"> Listagem de Pessoas</i></h2>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Id</th>
-                            <th class="text-center">Nome</th>
-                            <th class="text-center">E-mail</th>
-                            <th class="text-center">Telefone</th>
-                            <th class="text-center">Estado</th>
-                            <th class="text-center">Endereço</th>
-                            <th class="text-center">Data de Nascimento</th>
-                            <th class="text-center">Dias para Aniversário</th>
-                            <th class="text-center">Opções</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for a in pessoas %}
-                        <tr>
-                            <td class="text-center">{{ a.id }}</td>
-                            <td class="text-center">{{ a.nome }}</td>
-                            <td class="text-center">{{ a.email }}</td>
-                            <td class="text-center">{{ a.telefone }}</td>
-                            <td class="text-center">{{ a.estado }}</td>
-                            <td class="text-center">{{ a.endereco }}</td>
-                            <td class="text-center">{{ a.data_nascimento }}</td>
-                            <td class="text-center">
-                                {% if a.dias_para_aniversario == 0 %}
-                                    🎉 Hoje é aniversário!
-                                {% else %}
-                                    {{ a.dias_para_aniversario }} dias
-                                {% endif %}
-                            </td>
-                            <td class="text-center">
-                                <a href="{% url 'pessoas:editar_pessoa' a.id %}">
-                                    <i class="fa fa-pencil-square" aria-hidden="true" style="color: #6B8E23;"></i>
-                                </a>
-                                <a href="{% url 'pessoas:excluir_pessoa' a.id %}">
-                                    <i class="fa fa-trash" aria-hidden="true" style="color: red;"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+        <!-- Breadcrumb -->
+        <ol class="breadcrumb m-13 p-3 mt-4">
+            <li class="breadcrumb-item p-">
+                <a href="{% url 'core:index' %}">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                {% block bread %}{% endblock bread %}
+            </li>
+        </ol>
+
+        <!-- Cards -->
+        <div class="row">
+
+        <!-- Pessoas -->
+            <div class="col-sm-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="fa fa-user"></i> <strong>Pessoas</strong>
+                    </div>
+                    <div class="card-body text-center">
+                        <h1>{{ total_pessoas }}</h1>
+                        <p class="text-muted">Pessoas Cadastradas</p>
+                        <a class="btn btn-success btn-sm"
+                           href="{% url 'pessoas:listar_pessoas' %}">
+                            <i class="fa fa-plus"></i> Cadastrar
+                        </a>
+                    </div>
+                </div>
             </div>
+
+            <!-- Serviços -->
+            <div class="col-sm-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="fa fa-list"></i> <strong>Serviços</strong>
+                    </div>
+                    <div class="card-body text-center">
+                        <h1>{{ total_servicos }}</h1>
+                        <p class="text-muted color:green">Serviços Realizados</p>
+                        <a class="btn btn-success btn-sm"
+                           href="{% url 'servicos:listar_servicos' %}">
+                            <i class="fa fa-plus"></i> Inserir
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Relatórios -->
+            <div class="col-sm-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="fa fa-bar-chart"></i> <strong>Relatórios</strong>
+                    </div>
+                    <div class="card-body text-center">
+                        <h3 class="mt-3">Relatórios</h3>
+                        <p class="text-muted">Visualize os relatórios realizados nos últimos meses</p>
+                        <a class="btn btn-success btn-sm"
+                           href="{% url 'core:relatorio' %}">
+                            <i class="fa fa-plus"></i> Ver Relatórios
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="fa fa-birthday-cake"></i><strong> Aniversariantes</strong>
+                    </div>
+                <div class="card-body text-center">
+                    <h1>{{ lista_aniversariantes|length }}</h1>
+
+                    {% if lista_aniversariantes|length == 1 %}
+                        <p class="text-muted">Aniversariante hoje</p>
+                    {% elif lista_aniversariantes|length > 1 %}
+                        <p class="text-muted">Aniversariantes hoje</p>
+                    {% else %}
+                        <p class="text-muted">Nenhum aniversariante hoje</p>
+                    {% endif %}
+
+                    {% if lista_aniversariantes|length > 0 %}
+                        <button id="abrirAniversariantes"
+                                class="btn btn-success btn-sm">
+                            Ver 🎉
+                        </button>
+                    {% endif %}
+                </div>
+                    
+                        
+                </div>
+            </div>
+        </div>       
         </div>
+
+
+{% if lista_aniversariantes|length > 0 %}
+
+<div class="modal fade" id="aniversarioModal">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content aniversario-modal">
+
+<div class="modal-header bg-success text-white border-radious-12">
+<h5>🎉 Aniversariante do Dia</h5>
+</div>
+
+<div class="modal-body text-center">
+
+<h3 id="nomePessoa"></h3>
+<p id="idadePessoa"></p>
+<div class="mt-3 text-center">
+    <span class="font-weight-bold">CONTATO:</span>
+</div>
+<div class="mt-2 text-center">
+
+    <div class="d-flex justify-content-center">
+        <span class="font-weight-bold mr-2">Email:</span>
+        <span id="emailPessoa"></span>
     </div>
 
-    <div class="col-12 card mb-3">
-        <div class="card-header">
-            <a href="{% url 'pessoas:inserir_pessoa' %}"><button class="btn btn-success">Cadastrar</button></a>
-        </div>
+    <div class="d-flex justify-content-center mt-2">
+        <span class="font-weight-bold mr-2">Telefone:</span>
+        <span id="telefonePessoa"></span>
     </div>
+    <div class="d-flex justify-content-center mt-2 mb-4">
+        <span class="font-weight-bold mr-2">Ultimo Serviço Realizado:</span>
+        <span id="servicoPessoa"></span>
+    </div>
+
+
+</div>
+
+<div class="modal-footer justify-content-center">
+<button id="btnParabens" class="btn btn-success" data-dismiss="modal">
+Parabenizar 🎊
+</button>
+</div>
+
+</div>
+</div>
+</div>
+
+
+
+
+<style>
+.aniversario-modal {
+    border-radius: 12px;
+    border: 1px solid #28a745; /* outline definido */
+    box-shadow: 0 0px 20px rgba(40,167,69,0.3); /* brilho suave */
+    overflow: hidden;
+}
+
+.aniversario-modal .modal-header {
+    background: linear-gradient(45deg, #28a745, #218838);
+    border-bottom: none;
+}
+.nome-aniversariante {
+    font-weight: 600;
+    color: #28a745;
+}
+
+.idade-aniversariante {
+    font-size: 1.2rem;
+    font-weight: 500;
+    background: rgba(40,167,69,0.1);
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #28a745;
+}
+</style>
+
+
+
+
+
+{{ lista_aniversariantes|json_script:"dadosAniversariantes" }}
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    let aniversariantes = JSON.parse(
+        document.getElementById("dadosAniversariantes").textContent
+    );
+
+    if(aniversariantes.length === 0) return;
+
+    let hoje = new Date().toISOString().split('T')[0];
+    let chave = "aniversario_visto_" + hoje;
+
+    let index = 0;
+    let modal = $('#aniversarioModal');
+
+    function mostrarPessoa(){
+
+        if(index >= aniversariantes.length){
+            return;
+        }
+
+        let pessoa = aniversariantes[index];
+
+        document.getElementById("nomePessoa").innerText = pessoa.nome;
+        document.getElementById("idadePessoa").innerText = pessoa.idade + " anos 🎂";
+        document.getElementById("emailPessoa").innerText = pessoa.email;
+        document.getElementById("telefonePessoa").innerText = pessoa.telefone;
+        document.getElementById("servicoPessoa").innerText = pessoa.servico;
+
+        modal.modal('show');
+    }
+
+    // 👇 Só abre automaticamente se ainda não viu hoje
+    if(!localStorage.getItem(chave)){
+        mostrarPessoa();
+        localStorage.setItem(chave, "true");
+    }
+
+    modal.on('hidden.bs.modal', function(){
+        index++;
+        mostrarPessoa();
+    });
+
+    // 👇 Botão para reabrir manualmente
+    document.getElementById("abrirAniversariantes")
+        ?.addEventListener("click", function(){
+            index = 0;
+            mostrarPessoa();
+        });
+
+});
+</script>
+{% endif %}
+
+<h1>{{ aniversariantes }}</h1>
+
+
+
+
+
 {% endblock conteudo %}
 
 

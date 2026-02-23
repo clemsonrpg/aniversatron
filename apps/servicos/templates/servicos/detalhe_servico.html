@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+<div class="container mt-4">
+
+    <h2>{{ servico.nome }}</h2>
+    <hr>
+
+    <div class="row">
+
+
+
+        <!-- Informações -->
+        <div class="col-md-8">
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Serviço:</strong> {{ servico.nome }}</li>
+                <li class="list-group-item"><strong>Descrição:</strong> {{ servico.descricao }}</li>
+                <li class="list-group-item"><strong>Data:</strong> {{ servico.data_servico }}</li>
+
+                <li class="list-group-item"><strong>Pessoa:</strong> {{ servico.pessoa.nome }}</li>
+
+                <li class="list-group-item"><strong>Telefone:</strong> {{ servico.pessoa.telefone }}</li>
+                <li class="list-group-item"><strong>Email:</strong> {{ servico.pessoa.email }}</li>
+
+                <li class="list-group-item"><strong>Data de Nascimento:</strong> {{ servico.pessoa.data_nascimento }}</li>
+                <li class="list-group-item"><strong>Localidade:</strong> {{ servico.pessoa.localidade }}</li>
+                <li class="list-group-item"><strong>Endereço:</strong> {{ servico.pessoa.endereco }}</li>
+            </ul>
+            <br>
+            <a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary">Voltar</a>
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

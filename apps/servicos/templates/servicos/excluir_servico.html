@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<body>
+<div class="card">
+    <div class="card-header">
+        Tem certeza que deseja remover o serviço abaixo?
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Id: {{servico.id}}</h5>
+        <h5 class="card-title">Pessoa: {{servico.pessoa.nome}}</h5>
+        <h5 class="card-title">Data de Nascimento: {{servico.pessoa.data_nascimento}}</h5>
+        <h5 class="card-title">Email: {{servico.pessoa.email}}</h5>
+        <h5 class="card-title">Telefone: {{servico.pessoa.telefone}}</h5>
+        <h5 class="card-title">Localidade: {{servico.pessoa.localidade}}</h5>
+        <h5 class="card-title">Endereço: {{servico.pessoa.endereco}}</h5>
+        <h5 class="card-title">Serviço Realizado: {{servico.nome}}</h5>
+
+
+        <form method="post">
+             {% csrf_token %}
+            <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-primary mt-3 mr-2">Voltar</a>
+            <button class="btn btn-danger mt-3" type="submit">Remover</button>
+            
+        </form>
+    </div>
+</div>
+</body>
+{% endblock conteudo %}
