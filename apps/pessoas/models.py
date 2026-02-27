@@ -30,7 +30,10 @@ class Pessoa(models.Model):
         blank=True,
         null=True
     )
-    servico = models.ManyToManyField('servicos.Servico', blank=True, null=True, related_name='pessoas')
+
+    servico = models.ManyToManyField('servicos.Servico', related_name='pessoas')
+    
+
     endereco = models.CharField(max_length=200, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     telefone = models.CharField(max_length=20, blank=True, null=True)

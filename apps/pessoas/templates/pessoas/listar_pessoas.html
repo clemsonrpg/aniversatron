@@ -65,16 +65,37 @@
                             <td class="text-center">{{ a.endereco }}</td>
                             <td class="text-center">{{ a.data_nascimento }}</td>
                             <td class="text-center servico-coluna">
-                                {% if a.servicos_ordenados %}
-                                    {{ a.servicos_ordenados.0.nome_servico }}
-                                    <br>
-                                    <small class="text-muted">
-                                        {{ a.servicos_ordenados.0.data_servico }}
-                                    </small>
-                                {% else %}
-                                    <span class="text-muted">Nenhum serviço</span>
-                                {% endif %}
-                            </td>
+    {% if a.servicos_ordenados %}
+        
+        {{ a.servicos_ordenados.0.nome_servico }}
+        <br>
+
+        <small class="text-muted">
+            {{ a.servicos_ordenados.0.data_servico }}
+        </small>
+        <br>
+
+        {% if a.servicos_ordenados.0.status == "Concluído" %}
+            <span class="badge bg-success">
+                {{ a.servicos_ordenados.0.status }}
+            </span>
+
+        {% elif a.servicos_ordenados.0.status == "Pendente" %}
+            <span class="badge bg-warning text-dark">
+                {{ a.servicos_ordenados.0.status }}
+            </span>
+
+
+        {% else %}
+            <span class="badge bg-secondary">
+                {{ a.servicos_ordenados.0.status }}
+            </span>
+        {% endif %}
+
+    {% else %}
+        <span class="text-muted">Nenhum serviço</span>
+    {% endif %}
+</td>
                             <td class="text-center">
                                 <a href="{% url 'pessoas:detalhe_pessoa' a.id %}">
                                     <i class="fa fa-search" aria-hidden="true" style="color: blue;"></i>

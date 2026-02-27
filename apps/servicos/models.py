@@ -8,3 +8,6 @@ class Servico(models.Model):
     data_servico = models.DateField(default=date.today)
     data_criacao = models.DateTimeField(auto_now_add=True)
     pessoa = models.ForeignKey('pessoas.Pessoa', on_delete=models.CASCADE, related_name='servicos')
+
+    localidade = models.ForeignKey('pessoas.Localidade', related_name='servicos_localidade')
+    status = models.CharField(max_length=20, choices=[("Pendente", "Pendente"), ("Concluído", "Concluído")], default="Pendente")
