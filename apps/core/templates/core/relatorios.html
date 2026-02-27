@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
+{% block titulo %}- Relatórios Estatísticos{% endblock titulo %}
+
 {% block conteudo %}
 <div class="content-wrapper">
     <div class="container-fluid">
@@ -17,12 +19,12 @@
             <li class="breadcrumb-item">
                 <a href="{% url 'core:index' %}">Home</a>
             </li>
-            <li class="breadcrumb-item active">
-                <a href="{% url 'core:relatorio' %}"></a>
+            <li class="breadcrumb-item">
+                 
+                <a href="{% url 'core:relatorio' %}">Relatórios</a>
             </li>
         </ol>
 
-        <!-- Cards Resumo -->
         <div class="row">
 
             <div class="col-sm-4 mb-3">
@@ -69,7 +71,7 @@
 
         </div>
 
-        <!-- Gráfico -->
+
         <div class="card mt-4">
             <div class="card-header bg-light">
                 <i class="fa fa-area-chart"></i>
@@ -80,7 +82,7 @@
             </div>
         </div>
 
-        <!-- Ranking -->
+
         <div class="card mt-4 mb-5">
             <div class="card-header bg-light">
                 <i class="fa fa-trophy"></i>

@@ -2,6 +2,8 @@
 
 {% load widget_tweaks %}
 
+{% block titulo %}- Cadastro de Pessoas{% endblock titulo %}
+
 {% block conteudo %}
 <body>
     <div class="row">
@@ -66,7 +68,7 @@
                     <div class="p-1 mb-2 bg-light text-dark">
                         <div class="form-row">
                             <div class="col-md-12">
-                               <a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary">Voltar</a>
+                               <a href="{% url 'pessoas:listar_pessoas' %}" class="btn btn-primary">Voltar</a>
                                <button type="submit" class="btn btn-success">Salvar</button>
                             </div>
                         </div>

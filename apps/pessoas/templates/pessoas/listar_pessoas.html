@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% load widget_tweaks %}
-
+{% block titulo %}- Listagem de Pessoas{% endblock titulo %}
 {% block conteudo %}
 <body>
     <style>
@@ -75,7 +75,7 @@
                                     <span class="text-muted">Nenhum serviço</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <a href="{% url 'pessoas:detalhe_pessoa' a.id %}">
                                     <i class="fa fa-search" aria-hidden="true" style="color: blue;"></i>
                                 </a>

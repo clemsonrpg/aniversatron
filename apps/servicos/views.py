@@ -13,14 +13,14 @@ def inserir_servico(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'O cadastro do serviço foi realizado com sucesso!')
-        return redirect('core:index')
+        return redirect('servicos:listar_servicos')
     form = ServicoForm()
     context = {'form': form}
     return render(request, template_name, context)
 
 def listar_servicos(request):
     template_name = 'servicos/listar_servicos.html'
-    servicos = Servico.objects.all().order_by('-data_servico')
+    servicos = Servico.objects.all().order_by('-data_servico', '-id')
     pessoas = Pessoa.objects.all()
     context = {'servicos': servicos, 'pessoas': pessoas}
     return render(request, template_name, context)
@@ -42,7 +42,7 @@ def excluir_servico(request, id):
     context = {'servico': servico}
     if request.method == "POST":
         servico.delete()
-        messages.error(request, 'O serviço foi excluído com sucesso.')
+        messages.warning(request, 'O serviço foi excluído com sucesso.')
         return redirect('servicos:listar_servicos')
     return render(request, template_name, context)
 

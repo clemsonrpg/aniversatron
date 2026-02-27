@@ -9,5 +9,8 @@ class ServicoForm(ModelForm):
         fields = '__all__'
         widgets = {
             'descricao': forms.Textarea(attrs={'placeholder': 'Digite a descrição do serviço'}),
-            'data_servico': forms.DateInput(attrs={'type': 'date'}),
+            'data_servico': forms.DateInput(
+                attrs={'type': 'date'},
+                format='%Y-%m-%d'
+            ),
         }

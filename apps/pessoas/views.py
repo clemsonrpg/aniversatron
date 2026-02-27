@@ -11,10 +11,9 @@ def inserir_pessoa(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'O cadastro da pessoa foi realizado com sucesso!')
-        return redirect('core:index')
+        return redirect('pessoas:listar_pessoas')
     form = PessoaForm()
-    ultimo_servico = Servico.objects.order_by('data_servico').first()
-    context = {'form': form, 'ultimo_servico': ultimo_servico}
+    context = {'form': form}
     return render(request, template_name, context)
 
 from django.db.models import Prefetch
@@ -25,7 +24,7 @@ def listar_pessoas(request):
     pessoas = Pessoa.objects.prefetch_related(
         Prefetch(
             'servicos',
-            queryset=Servico.objects.order_by('-data_servico'),
+            queryset=Servico.objects.order_by('-data_servico', '-id'),
             to_attr='servicos_ordenados'
         )
     )
@@ -38,12 +37,11 @@ def editar_pessoa(request, id):
     template_name = 'pessoas/form_pessoa.html'
     pessoa = get_object_or_404(Pessoa, id=id)
     form = PessoaForm(request.POST or None, request.FILES or None, instance=pessoa)
-    ultimo_servico = Servico.objects.filter(pessoa=pessoa).order_by('data_servico').first()
-    context = {'form': form, 'ultimo_servico': ultimo_servico}
+    context = {'form': form}
     if form.is_valid():
         form.save()
         messages.success(request, 'Os dados foram atualizados com sucesso.')
-        return redirect('core:index')
+        return redirect('pessoas:listar_pessoas')
     return render(request, template_name, context)
 
 def excluir_pessoa(request, id):
@@ -55,7 +53,7 @@ def excluir_pessoa(request, id):
     context = {'pessoa': pessoa}
     if request.method == "POST":
         pessoa.delete()
-        messages.error(request, 'A pessoa foi excluída com sucesso.')
+        messages.warning(request, 'A pessoa foi excluída com sucesso.')
         return redirect('pessoas:listar_pessoas')
     return render(request, template_name, context)
 
@@ -63,8 +61,8 @@ def excluir_pessoa(request, id):
 def detalhe_pessoa(request, id):
     template_name = 'pessoas/detalhe_pessoa.html'
     pessoa = get_object_or_404(Pessoa, id=id)
-    ultimo_servico = Servico.objects.filter(pessoa=pessoa).order_by('data_servico').first()
-    context = {'pessoa': pessoa, 'ultimo_servico': ultimo_servico}
+    servicos = Servico.objects.filter(pessoa=pessoa).order_by('-data_servico')
+    context = {'pessoa': pessoa, 'servicos': servicos}
     return render(request, template_name, context)
 
 

@@ -1,12 +1,4 @@
 from django.http import HttpResponse
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib import colors
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.lib import fonts
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfbase import pdfmetrics
 from django.utils import timezone
 from django.db.models import Count
 from apps.servicos.models import Servico
@@ -16,7 +8,8 @@ from django.db.models import Prefetch
 import json
 from django.db.models.functions import TruncMonth
 from datetime import timedelta
-
+from openpyxl import Workbook
+from openpyxl.styles import Font
 
 def index(request):
     hoje = timezone.localdate()
@@ -35,7 +28,7 @@ def index(request):
         pessoa = Pessoa.objects.prefetch_related(
             Prefetch(
                 'servicos',
-                queryset=Servico.objects.order_by('-data_servico'),
+                queryset=Servico.objects.order_by('-data_servico', '-id'),
                 to_attr='servicos_ordenados'
             )
         ).get(id=p.id)
@@ -51,7 +44,7 @@ def index(request):
     context = {
         'total_pessoas': Pessoa.objects.count(),
         'total_servicos': total_servicos,
-        'lista_aniversariantes': lista
+        'lista_aniversariantes': lista,
     }
     return render(request, 'index.html', context)
 
@@ -112,18 +105,12 @@ def relatorios(request):
 
 
 
-from django.http import HttpResponse
-from openpyxl import Workbook
-from openpyxl.styles import Font
-from django.utils import timezone
-from django.db.models import Count
-from apps.servicos.models import Servico
+
 
 
 def relatorio_excel(request):
     hoje = timezone.localdate()
 
-    # Criar resposta HTTP Excel
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
@@ -133,9 +120,6 @@ def relatorio_excel(request):
     ws = wb.active
     ws.title = "Relatório de Serviços"
 
-    # =============================
-    # DADOS DO BANCO
-    # =============================
 
     total_geral = Servico.objects.count()
 
@@ -151,9 +135,6 @@ def relatorio_excel(request):
         .order_by("-total")[:5]
     )
 
-    # =============================
-    # CABEÇALHO
-    # =============================
 
     ws["A1"] = "SECRETARIA DE AGRICULTURA"
     ws["A1"].font = Font(size=14, bold=True)
@@ -167,9 +148,7 @@ def relatorio_excel(request):
     ws["A6"] = "Total de Serviços no Mês Atual:"
     ws["B6"] = total_mes
 
-    # =============================
-    # RANKING
-    # =============================
+
 
     ws["A8"] = "Serviços Mais Realizados"
     ws["A8"].font = Font(size=12, bold=True)

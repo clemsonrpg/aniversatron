@@ -1,28 +1,45 @@
 {% extends 'base.html' %}
 
+{% load widget_tweaks %}
+
+{% block titulo %}- Excluir Serviço{% endblock titulo %}
+
 {% block conteudo %}
 <body>
-<div class="card">
-    <div class="card-header">
-        Tem certeza que deseja remover o serviço abaixo?
+<div class="row">
+        <div class="col-12">
+        </div>
     </div>
-    <div class="card-body">
-        <h5 class="card-title">Id: {{servico.id}}</h5>
-        <h5 class="card-title">Pessoa: {{servico.pessoa.nome}}</h5>
-        <h5 class="card-title">Data de Nascimento: {{servico.pessoa.data_nascimento}}</h5>
-        <h5 class="card-title">Email: {{servico.pessoa.email}}</h5>
-        <h5 class="card-title">Telefone: {{servico.pessoa.telefone}}</h5>
-        <h5 class="card-title">Localidade: {{servico.pessoa.localidade}}</h5>
-        <h5 class="card-title">Endereço: {{servico.pessoa.endereco}}</h5>
-        <h5 class="card-title">Serviço Realizado: {{servico.nome}}</h5>
+    <div class="card mb-3">
+        <div class="card-header">
+            <h2><i class="fa fa-trash"></i> Tem certeza que deseja excluir o serviço abaixo?</h2>
+        </div>
+        <div class="container mt-4">
+
+    <div class="row">
 
 
-        <form method="post">
-             {% csrf_token %}
-            <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-primary mt-3 mr-2">Voltar</a>
-            <button class="btn btn-danger mt-3" type="submit">Remover</button>
-            
-        </form>
+
+        <!-- Informações -->
+        <div class="col-md-8 ">
+            <ul class="list-group ">
+                <li class="list-group-item"><strong>Nome:</strong> {{ servico.nome_servico }}</li>
+                    <li class="list-group-item"><strong>Descrição:</strong> {{ servico.descricao }}</li>
+                <li class="list-group-item"><strong>Data:</strong> {{ servico.data_servico }}</li>
+                <li class="list-group-item"><strong>Telefone:</strong> {{ servico.pessoa.telefone }}</li>
+                <li class="list-group-item"><strong>Email:</strong> {{ servico.pessoa.email }}</li>
+                <li class="list-group-item"><strong>Data de Nascimento:</strong> {{ servico.pessoa.data_nascimento }}</li>
+                <li class="list-group-item"><strong>Localidade:</strong> {{ servico.pessoa.localidade }}</li>
+                <li class="list-group-item mb-3"><strong>Endereço:</strong> {{ servico.pessoa.endereco }}</li>
+            </ul>
+            <br>
+            <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-primary mr-2 mb-5">Voltar</a>
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <button class="btn btn-danger mb-5" type="submit">Remover</button>
+            </form>
+        </div>
+
     </div>
 </div>
 </body>
