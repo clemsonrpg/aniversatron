@@ -9,21 +9,19 @@ from apps.servicos.models import Servico
 def inserir_servico(request):
     template_name = 'servicos/form_servico.html'
     if request.method == 'POST':
-        form = ServicoForm(request.POST or None, request.FILES)
+        form = ServicoForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, 'O cadastro do serviço foi realizado com sucesso!')
-        return redirect('servicos:listar_servicos')
-    form = ServicoForm()
-    context = {'form': form}
-    return render(request, template_name, context)
+            return redirect('servicos:listar_servicos')
+    else:
+        form = ServicoForm()
+    return render(request, template_name, {'form': form})
 
 def listar_servicos(request):
     template_name = 'servicos/listar_servicos.html'
-    servicos = Servico.objects.all().order_by('-data_servico', '-id')
-    pessoas = Pessoa.objects.all()
-    context = {'servicos': servicos, 'pessoas': pessoas}
-    return render(request, template_name, context)
+    servicos = Servico.objects.select_related('propriedade__pessoa').all().order_by('-data_servico', '-id')
+    return render(request, template_name, {'servicos': servicos})
 
 def editar_servico(request, id):
     template_name = 'servicos/form_servico.html'

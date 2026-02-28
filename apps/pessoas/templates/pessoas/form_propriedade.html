@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block titulo %}- Cadastro de Propriedades{% endblock titulo %}
+
+{% block conteudo %}
+
+<div class="card">
+    <div class="card-header">
+        <h3>
+            <i class="fa fa-home"></i>
+            Cadastro de Propriedades - {{ pessoa.nome }}
+        </h3>
+        {% include 'partials/messages.html' %}
+    </div>
+
+    <div class="card-body">
+
+        <form method="post">
+            {% csrf_token %}
+            {{ formset.management_form }}
+
+            <div id="formset-container">
+                {% for form in formset %}
+                <div class="form-row border rounded p-3 mb-3 propriedade-form bg-light">
+                    {{ form.id }}
+                    
+                    <div class="col-md-5">
+                        <label><strong>Nome da Propriedade</strong></label>
+                        {{ form.nome_propriedade|add_class:"form-control" }}
+                    </div>
+
+                    <div class="col-md-5">
+                        <label><strong>Localidade</strong></label>
+                        {{ form.localidade|add_class:"form-control" }}
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <div class="d-none">{{ form.DELETE }}</div>
+                        <button type="button" class="btn btn-outline-danger btn-remover w-100">
+                            <i class="fa fa-trash"></i> Remover
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <button type="button" id="add-form" class="btn btn-primary">
+                    <i class="fa fa-plus"></i> Adicionar Propriedade
+                </button>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-start mt-3" style="gap: 10px;">
+                <a href="{% url 'pessoas:listar_pessoas' %}" class="btn btn-primary">
+                    Voltar
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-save"></i> Salvar Propriedades
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<div id="empty-form" class="d-none">
+    <div class="form-row border rounded p-3 mb-3 propriedade-form bg-light">
+        <div class="col-md-5">
+            <label><strong>Nome da Propriedade</strong></label>
+            {{ formset.empty_form.nome_propriedade|add_class:"form-control" }}
+        </div>
+
+        <div class="col-md-5">
+            <label><strong>Localidade</strong></label>
+            {{ formset.empty_form.localidade|add_class:"form-control" }}
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="button" class="btn btn-outline-danger btn-remover w-100">
+                <i class="fa fa-trash"></i> Remover
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const container = document.getElementById("formset-container");
+    const addButton = document.getElementById("add-form");
+    // O prefixo 'propriedades' é gerado pelo related_name no seu model
+    const totalForms = document.getElementById("id_propriedades-TOTAL_FORMS");
+
+    function atualizarBotoes() {
+        const formsVisiveis = container.querySelectorAll(".propriedade-form:not([style*='display: none'])");
+        container.querySelectorAll(".btn-remover").forEach(btn => {
+            if (formsVisiveis.length <= 1) {
+                btn.disabled = true;
+                btn.classList.add("disabled");
+            } else {
+                btn.disabled = false;
+                btn.classList.remove("disabled");
+            }
+        });
+    }
+
+    addButton.addEventListener("click", function () {
+        const formCount = parseInt(totalForms.value);
+        const emptyFormHtml = document.getElementById("empty-form").innerHTML
+            .replace(/__prefix__/g, formCount);
+
+        container.insertAdjacentHTML("beforeend", emptyFormHtml);
+        totalForms.value = formCount + 1;
+        atualizarBotoes();
+    });
+
+    container.addEventListener("click", function (e) {
+        const btn = e.target.closest(".btn-remover");
+        if (btn) {
+            const row = btn.closest(".propriedade-form");
+            const deleteCheckbox = row.querySelector('input[name$="-DELETE"]');
+
+            if (deleteCheckbox) {
+                deleteCheckbox.checked = true;
+                row.style.display = 'none';
+            } else {
+                row.remove();
+                const forms = container.querySelectorAll(".propriedade-form");
+                totalForms.value = forms.length;
+                
+                // Reindexação necessária para o Django não se perder
+                Array.from(container.querySelectorAll(".propriedade-form")).forEach((form, index) => {
+                    form.querySelectorAll("input, select").forEach(input => {
+                        const name = input.getAttribute("name");
+                        if (name) input.setAttribute("name", name.replace(/-\d+-/, `-${index}-`));
+                        const id = input.getAttribute("id");
+                        if (id) input.setAttribute("id", id.replace(/-\d+-/, `-${index}-`));
+                    });
+                });
+            }
+            atualizarBotoes();
+        }
+    });
+
+    atualizarBotoes();
+});
+</script>
+
+{% endblock conteudo %}

@@ -1,6 +1,7 @@
 from django.contrib import messages
+from urllib3 import request
 from apps.servicos.models import Servico
-from .forms import PessoaForm
+from .forms import PessoaForm, PropriedadeFormSet
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Pessoa
 
@@ -9,9 +10,9 @@ def inserir_pessoa(request):
     if request.method == 'POST':
         form = PessoaForm(request.POST or None, request.FILES)
         if form.is_valid():
-            form.save()
+            pessoa = form.save()
             messages.success(request, 'O cadastro da pessoa foi realizado com sucesso!')
-        return redirect('pessoas:listar_pessoas')
+            return redirect('pessoas:inserir_propriedade', pessoa.id)
     form = PessoaForm()
     context = {'form': form}
     return render(request, template_name, context)
@@ -22,11 +23,7 @@ def listar_pessoas(request):
     template_name = 'pessoas/listar_pessoas.html'
 
     pessoas = Pessoa.objects.prefetch_related(
-        Prefetch(
-            'servicos',
-            queryset=Servico.objects.order_by('-data_servico', '-id'),
-            to_attr='servicos_ordenados'
-        )
+        'propriedades__servicos'
     )
 
     context = {'pessoas': pessoas}
@@ -61,8 +58,28 @@ def excluir_pessoa(request, id):
 def detalhe_pessoa(request, id):
     template_name = 'pessoas/detalhe_pessoa.html'
     pessoa = get_object_or_404(Pessoa, id=id)
-    servicos = Servico.objects.filter(pessoa=pessoa).order_by('-data_servico')
-    context = {'pessoa': pessoa, 'servicos': servicos}
+    propriedades = pessoa.propriedades.prefetch_related('servicos')
+    context = {'pessoa': pessoa, 'propriedades': propriedades}
     return render(request, template_name, context)
 
 
+from .forms import PropriedadeForm
+
+def inserir_propriedade(request, pessoa_id):
+    template_name = 'pessoas/form_propriedade.html'
+    pessoa = get_object_or_404(Pessoa, id=pessoa_id)
+
+    if request.method == 'POST':
+        formset = PropriedadeFormSet(request.POST, instance=pessoa)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, 'Propriedades cadastradas com sucesso!')
+            return redirect('pessoas:detalhe_pessoa', pessoa.id)
+    else:
+        formset = PropriedadeFormSet(instance=pessoa)
+
+    context = {
+        'pessoa': pessoa,
+        'formset': formset
+    }
+    return render(request, template_name, context)

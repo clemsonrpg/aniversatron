@@ -3,123 +3,134 @@
 {% load widget_tweaks %}
 {% block titulo %}- Listagem de Pessoas{% endblock titulo %}
 {% block conteudo %}
-<body>
-    <style>
+<style>
 .servico-coluna {
     white-space: normal !important;
     word-wrap: break-word;
     max-width: 300px;
 }
+.link-propriedade {
+    color: #007bff;
+    text-decoration: none;
+}
+.link-propriedade:hover {
+    text-decoration: underline;
+}
 </style>
-    <div class="row">
-        <div class="col-12">
+
+<div class="row">
+    <div class="col-12">
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h2><i class="fa fa-list"></i> Listagem de Pessoas</h2>
+        {% include 'partials/messages.html' %}
+    </div>
+
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb m-13 p-3 mt-4">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'core:index' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'pessoas:listar_pessoas' %}">Pessoas</a>
+                </li>
+            </ol>
         </div>
     </div>
-    <div class="card mb-3">
-        <div class="card-header">
-            <h2><i class="fa fa-list"></i> Listagem de Pessoas</h2>
-        </div>
-        <div class="content-wrapper">
-    <div class="container-fluid">
-                <!-- Breadcrumb -->
-        <ol class="breadcrumb m-13 p-3 mt-4">
-            <li class="breadcrumb-item p-">
-                <a href="{% url 'core:index' %}">Home</a>
-            </li>
-            <li class="breadcrumb-item">
-                {% block bread %}
-            </li>
-            <li class="breadcrum-item p-">
-                <a href="{% url 'pessoas:listar_pessoas' %}">Pessoas</a>
-            </li>
-            <li class="breadcrumb-tiem">
-                {% endblock bread %}
-            </li>
-        </ol>
-        </div>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Id</th>
-                            <th class="text-center">Nome</th>
-                            <th class="text-center">E-mail</th>
-                            <th class="text-center">Telefone</th>
-                            <th class="text-center">Localidade</th>
-                            <th class="text-center">Endereço</th>
-                            <th class="text-center">Data de Nascimento</th>
-                            <th class="text-center">Ultimo Serviço Realizado</th>
-                            <th class="text-center">Opções</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for a in pessoas %}
-                        <tr>
-                            <td class="text-center">{{ a.id }}</td>
-                            <td class="text-center"><a href="{% url 'pessoas:detalhe_pessoa' a.id %}">{{ a.nome.upper }}</a></td>
-                            <td class="text-center">{{ a.email }}</td>
-                            <td class="text-center">{{ a.telefone }}</td>
-                            <td class="text-center">{{ a.localidade }}</td>
-                            <td class="text-center">{{ a.endereco }}</td>
-                            <td class="text-center">{{ a.data_nascimento }}</td>
-                            <td class="text-center servico-coluna">
-    {% if a.servicos_ordenados %}
-        
-        {{ a.servicos_ordenados.0.nome_servico }}
-        <br>
 
-        <small class="text-muted">
-            {{ a.servicos_ordenados.0.data_servico }}
-        </small>
-        <br>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="text-center">Id</th>
+                        <th class="text-center">Nome</th>
+                        <th class="text-center">E-mail</th>
+                        <th class="text-center">Telefone</th>
+                        <th class="text-center">Propriedades</th>
+                        <th class="text-center">Endereço</th>
+                        <th class="text-center">Data de Nascimento</th>
+                        <th class="text-center">Ultimo Serviço Realizado</th>
+                        <th class="text-center">Opções</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for a in pessoas %}
+                    <tr>
+                        <td class="text-center">{{ a.id }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'pessoas:detalhe_pessoa' a.id %}">{{ a.nome.upper }}</a>
+                        </td>
+                        <td class="text-center">{{ a.email|default:"-" }}</td>
+                        <td class="text-center">{{ a.telefone|default:"-" }}</td>
+                        
+                        <td class="text-center">
+                            {% for prop in a.propriedades.all %}
+                                <div class="mb-1">
+                                    <a href="{% url 'pessoas:inserir_propriedade' a.id %}" class="link-propriedade">
+                                        {{ prop.nome_propriedade }}
+                                        {% if prop.get_localidade_display %}
+                                            - {{ prop.get_localidade_display }}
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            {% empty %}
+                                <span class="text-muted">Nenhuma</span>
+                            {% endfor %}
+                        </td>
 
-        {% if a.servicos_ordenados.0.status == "Concluído" %}
-            <span class="badge bg-success">
-                {{ a.servicos_ordenados.0.status }}
-            </span>
+                        <td class="text-center">{{ a.endereco|default:"-" }}</td>
+                        <td class="text-center">{{ a.data_nascimento|date:"d/m/Y"|default:"-" }}</td>
+                        
+                        <td class="text-center servico-coluna">
+                            {# Busca o serviço mais recente entre todas as propriedades da pessoa #}
+                            {% with p=a.propriedades.first %}
+                                {% if p and p.servicos.exists %}
+                                    {% with s=p.servicos.all.0 %}
+                                        <strong>{{ s.nome_servico }}</strong> - {{ p.nome_propriedade }}, {{ p.get_localidade_display }}<br>
+                                        <small class="text-muted">{{ s.data_servico|date:"d/m/Y" }}</small><br>
+                                        
+                                        {% if s.status == "Concluído" %}
+                                            <span class="badge bg-success" style="color: white;">{{ s.status }}</span>
+                                        {% elif s.status == "Pendente" %}
+                                            <span class="badge bg-warning text-dark">{{ s.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary" style="color: white;">{{ s.status }}</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% else %}
+                                    <span class="text-muted">Nenhum serviço</span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
 
-        {% elif a.servicos_ordenados.0.status == "Pendente" %}
-            <span class="badge bg-warning text-dark">
-                {{ a.servicos_ordenados.0.status }}
-            </span>
-
-
-        {% else %}
-            <span class="badge bg-secondary">
-                {{ a.servicos_ordenados.0.status }}
-            </span>
-        {% endif %}
-
-    {% else %}
-        <span class="text-muted">Nenhum serviço</span>
-    {% endif %}
-</td>
-                            <td class="text-center">
-                                <a href="{% url 'pessoas:detalhe_pessoa' a.id %}">
-                                    <i class="fa fa-search" aria-hidden="true" style="color: blue;"></i>
-                                </a>
-                                <a href="{% url 'pessoas:editar_pessoa' a.id %}">
-                                    <i class="fa fa-pencil-square" aria-hidden="true" style="color: #6B8E23;"></i>
-                                </a>
-                                <a href="{% url 'pessoas:excluir_pessoa' a.id %}">
-                                    <i class="fa fa-trash" aria-hidden="true" style="color: red;"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                        <td class="text-center">
+                            <a href="{% url 'pessoas:detalhe_pessoa' a.id %}">
+                                <i class="fa fa-search" aria-hidden="true" style="color: blue;"></i>
+                            </a>
+                            <a href="{% url 'pessoas:editar_pessoa' a.id %}">
+                                <i class="fa fa-pencil-square" aria-hidden="true" style="color: #6B8E23;"></i>
+                            </a>
+                            <a href="{% url 'pessoas:excluir_pessoa' a.id %}">
+                                <i class="fa fa-trash" aria-hidden="true" style="color: red;"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="col-12 card mb-3 p-3">
-        <div class="card-header">
-            <a href="{% url 'core:index' %}"><button class="btn btn-primary mr-2">Voltar</button></a>
-            <a href="{% url 'pessoas:inserir_pessoa' %}"><button class="btn btn-success">Cadastrar</button></a>
-            
-        </div>
+</div>
+
+<div class="col-12 card mb-3 p-3">
+    <div class="card-header">
+        <a href="{% url 'core:index' %}"><button class="btn btn-primary mr-2">Voltar</button></a>
+        <a href="{% url 'pessoas:inserir_pessoa' %}"><button class="btn btn-success">Cadastrar</button></a>
     </div>
-</body>
+</div>
 {% endblock conteudo %}
