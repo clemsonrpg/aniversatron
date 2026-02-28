@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for prop in propriedades %}
+<option value="{{ prop.id }}">{{ prop.nome_propriedade }} - {{ prop.get_localidade_display }}</option>
+{% endfor %}

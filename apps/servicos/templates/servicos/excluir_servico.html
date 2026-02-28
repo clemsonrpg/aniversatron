@@ -5,42 +5,73 @@
 {% block titulo %}- Excluir Serviço{% endblock titulo %}
 
 {% block conteudo %}
-<body>
-<div class="row">
-        <div class="col-12">
+<style>
+    .card-danger {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(231, 74, 59, 0.15);
+    }
+    .rounded-lg {
+        border-radius: 12px !important;
+    }
+    .alert-custom {
+        background-color: #fff5f5;
+        border-left: 5px solid #e74a3b;
+        color: #c53030;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-danger">
+                <div class="card-header bg-white py-4 border-bottom-0 text-center">
+                    <div class="mb-3">
+                        <i class="fa fa-exclamation-triangle text-danger fa-4x"></i>
+                    </div>
+                    <h2 class="text-dark font-weight-bold">Confirmar Exclusão</h2>
+                    <p class="text-muted">Esta ação não poderá ser desfeita.</p>
+                </div>
+                
+                <div class="card-body px-5">
+                    <div class="alert alert-custom p-3 rounded-lg mb-4">
+                        Deseja realmente remover o serviço <strong>{{ servico.nome_servico }}</strong> vinculado à propriedade <strong>{{ servico.propriedade.nome_propriedade }}</strong>?
+                    </div>
+
+                    <div class="bg-light p-4 rounded-lg border mb-4">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <small class="text-muted d-block">Cliente</small>
+                                <strong>{{ servico.propriedade.pessoa.nome }}</strong>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <small class="text-muted d-block">Data do Registro</small>
+                                <strong>{{ servico.data_servico|date:"d/m/Y" }}</strong>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted d-block">Descrição</small>
+                                <p class="mb-0 italic">{{ servico.descricao|truncatechars:100|default:"Sem descrição." }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-secondary btn-lg rounded-lg shadow-sm px-4 mr-3">
+                                <i class="fa fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg rounded-lg shadow-sm px-4">
+                                <i class="fa fa-trash"></i> Confirmar Remoção
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-transparent py-4 text-center border-0">
+                    <small class="text-muted">ID do Registro: #{{ servico.id }}</small>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="card mb-3">
-        <div class="card-header">
-            <h2><i class="fa fa-trash"></i> Tem certeza que deseja excluir o serviço abaixo?</h2>
-        </div>
-        <div class="container mt-4">
-
-    <div class="row">
-
-
-
-        <!-- Informações -->
-        <div class="col-md-8 ">
-            <ul class="list-group ">
-                <li class="list-group-item"><strong>Nome:</strong> {{ servico.nome_servico }}</li>
-                    <li class="list-group-item"><strong>Descrição:</strong> {{ servico.descricao }}</li>
-                <li class="list-group-item"><strong>Data:</strong> {{ servico.data_servico }}</li>
-                <li class="list-group-item"><strong>Telefone:</strong> {{ servico.pessoa.telefone }}</li>
-                <li class="list-group-item"><strong>Email:</strong> {{ servico.pessoa.email }}</li>
-                <li class="list-group-item"><strong>Data de Nascimento:</strong> {{ servico.pessoa.data_nascimento }}</li>
-                <li class="list-group-item"><strong>Localidade:</strong> {{ servico.pessoa.localidade }}</li>
-                <li class="list-group-item mb-3"><strong>Endereço:</strong> {{ servico.pessoa.endereco }}</li>
-            </ul>
-            <br>
-            <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-primary mr-2 mb-5">Voltar</a>
-            <form method="post" style="display: inline;">
-                {% csrf_token %}
-                <button class="btn btn-danger mb-5" type="submit">Remover</button>
-            </form>
-        </div>
-
     </div>
 </div>
-</body>
 {% endblock conteudo %}

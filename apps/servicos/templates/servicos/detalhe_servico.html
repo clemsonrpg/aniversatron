@@ -5,36 +5,112 @@
 {% block titulo %}- Detalhes do Serviço{% endblock titulo %}
 
 {% block conteudo %}
-<div class="container mt-4">
+<style>
+    .card-custom {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .rounded-lg {
+        border-radius: 12px !important;
+    }
+    .info-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: #4e73df;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 2px;
+    }
+    .info-value {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 15px;
+        display: block;
+    }
+    .badge-status {
+        border-radius: 20px;
+        padding: 6px 15px;
+        font-weight: 600;
+    }
+</style>
 
-    <h2>{{ servico.nome_servico }}</h2>
-    <hr>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark m-0"><i class="fa fa-search text-primary"></i> Detalhes do Serviço #{{ servico.id }}</h2>
+        <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-primary rounded-lg shadow-sm">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
+    </div>
 
     <div class="row">
-
-
-
-        <!-- Informações -->
-        <div class="col-md-8">
-            <ul class="list-group">
-                <li class="list-group-item"><strong>Serviço:</strong> {{ servico.nome_servico }}</li>
-                <li class="list-group-item"><strong>Descrição:</strong> {{ servico.descricao }}</li>
-                <li class="list-group-item"><strong>Data:</strong> {{ servico.data_servico }}</li>
-
-                <li class="list-group-item"><strong>Pessoa:</strong> {{ servico.pessoa.nome }}</li>
-
-                <li class="list-group-item"><strong>Telefone:</strong> {{ servico.pessoa.telefone }}</li>
-                <li class="list-group-item"><strong>Email:</strong> {{ servico.pessoa.email }}</li>
-
-                <li class="list-group-item"><strong>Data de Nascimento:</strong> {{ servico.pessoa.data_nascimento }}</li>
-                <li class="list-group-item"><strong>Localidade:</strong> {{ servico.pessoa.localidade }}</li>
-                <li class="list-group-item"><strong>Endereço:</strong> {{ servico.pessoa.endereco }}</li>
-            </ul>
-            <br>
-            <a href="{{% url 'servicos:listar_servicos' %}}" class="btn btn-primary">Voltar</a>
-            </a>
+        <div class="col-md-7">
+            <div class="card card-custom mb-4">
+                <div class="card-header bg-white py-3 border-bottom-0">
+                    <h5 class="m-0 font-weight-bold text-primary">Informações da Execução</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="info-label">Tipo de Serviço</span>
+                            <span class="info-value">{{ servico.nome_servico }}</span>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="info-label">Status Atual</span>
+                            {% if servico.status == "Concluído" %}
+                                <span class="badge badge-success badge-status shadow-sm">Concluído</span>
+                            {% else %}
+                                <span class="badge badge-warning badge-status shadow-sm text-dark">Pendente</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <span class="info-label">Data Programada/Realizada</span>
+                            <span class="info-value">{{ servico.data_servico|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <span class="info-label">Descrição Detalhada</span>
+                            <div class="p-3 bg-light rounded-lg border text-muted">
+                                {{ servico.descricao|default:"Nenhuma observação registrada para este serviço." }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <div class="col-md-5">
+            <div class="card card-custom mb-4 border-left-primary">
+                <div class="card-header bg-dark text-white py-3 rounded-top" style="border-radius: 15px 15px 0 0;">
+                    <h5 class="m-0"><i class="fa fa-user-circle"></i> Dados do Cliente</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item py-3">
+                        <span class="info-label text-muted">Nome do Proprietário</span>
+                        <a href="{% url 'pessoas:detalhe_pessoa' servico.propriedade.pessoa.id %}" class="font-weight-bold text-dark">
+                            {{ servico.propriedade.pessoa.nome.upper }}
+                        </a>
+                    </li>
+                    <li class="list-group-item py-3">
+                        <span class="info-label text-muted">Propriedade / Imóvel</span>
+                        <span class="d-block font-weight-bold">{{ servico.propriedade.nome_propriedade }}</span>
+                    </li>
+                    <li class="list-group-item py-3">
+                        <span class="info-label text-muted">Localização</span>
+                        <span class="d-block text-muted"><i class="fa fa-map-marker text-danger"></i> {{ servico.propriedade.get_localidade_display }}</span>
+                    </li>
+                    <li class="list-group-item py-3">
+                        <span class="info-label text-muted">Contato</span>
+                        <span class="d-block">{{ servico.propriedade.pessoa.telefone|default:"Não cadastrado" }}</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <a href="{% url 'servicos:editar_servico' servico.id %}" class="btn btn-success btn-block rounded-lg shadow-sm py-2">
+                    <i class="fa fa-edit"></i> Editar este Serviço
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

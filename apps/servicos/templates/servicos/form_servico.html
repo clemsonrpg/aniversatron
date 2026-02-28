@@ -1,69 +1,229 @@
 {% extends 'base.html' %}
-
 {% load widget_tweaks %}
 
 {% block titulo %}- Cadastro de Serviços{% endblock titulo %}
 
 {% block conteudo %}
-<body>
-    <div class="row">
-        <div class="col-12"></div>
-    </div>
-    <div class="card">
-        <div class="card-header">
-            <h2><i class="fa fa-users"></i> Inserir Serviço</h2>
+<style>
+
+    /* 1. Padronização Geral (Pessoa, Propriedade, Inputs) */
+    .form-control, 
+    select.form-control,
+    .select2-container--default .select2-selection--single {
+        height: 40px !important; /* Altura um pouco mais compacta e elegante */
+        border-radius: 6px !important; /* Menos redondo, mais quadrado profissional */
+        border: 1px solid #d1d3e2 !important; /* Cor cinza neutra */
+        background-color: #fff !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    /* 2. Ajuste do Select2 (Pessoa) */
+    .select2-container--default .select2-selection--single {
+        padding: 0 10px !important;
+        
+    }
+
+    /* Texto dentro do campo */
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 38px !important; /* Alinha com a altura de 40px */
+        color: #495057 !important;
+        font-size: 0.95rem;
+        padding-left: 0 !important;
+    }
+
+    /* Seta de seleção (ajustada para não ficar no topo) */
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 38px !important;
+        right: 8px !important;
+    }
+
+    /* 3. A Caixa de Busca (Dropdown) - Estilo Clean */
+    .select2-dropdown {
+        border-radius: 6px !important;
+        border: 1px solid #d1d3e2 !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+    }
+
+    /* Cor de quando você passa o mouse nas opções da lista */
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #4e73df !important; /* Azul padrão */
+        color: white !important;
+    }
+
+    /* Cor da opção que já está selecionada */
+    .select2-container--default .select2-results__option[aria-selected=true] {
+        background-color: #f8f9fc !important;
+        color: #2e59d9 !important;
+    }
+
+    /* 4. Foco (Clique no campo) */
+    .form-control:focus,
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #bac8f3 !important; /* Azul clarinho na borda */
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.1) !important;
+        outline: none !important;
+    }
+
+
+    /* Estilo do Charme */
+    .card-custom {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .rounded-lg {
+        border-radius: 12px !important;
+    }
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        transition: all 0.3s;
+    }
+    .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.1);
+    }
+    .section-title {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #000000;
+        font-weight: bold;
+    }
+    .btn-custom {
+        border-radius: 10px;
+        padding: 10px 25px;
+        font-weight: 600;
+        transition: transform 0.2s;
+    }
+    .btn-custom:hover {
+        transform: translateY(-2px);
+    }
+</style>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+    /* Ajuste para o Select2 seguir o seu estilo "Charme" */
+    .select2-container--default .select2-selection--single {
+        height: calc(1.5 em + .75 rem + 4px); /* Altura padrão do Bootstrap */
+        border-radius: 8px !important;
+        border: 1px solid #ddd !important;
+        padding: 5px;
+    }
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        padding-top: 2px;
+    }
+    .select2-dropdown {
+        border-radius: 12px !important;
+        border: 1px solid #ddd !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+</style>
+
+
+<div class="container-fluid py-4">
+    <div class="card card-custom">
+        <div class="card-header bg-white py-3">
+            <h2 class="m-0 text-dark">
+                <i class="fa fa-pencil-square-o"></i> 
+                {% if form.instance.id %}Editar{% else %}Inserir{% endif %} Serviço
+            </h2>
             {% include 'partials/messages.html' %}
         </div>
-        <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="container">
-                    <div class="p-1 mb-2 bg-light text-dark">
-                        <div class="form-row p-2">
-                            <div class="col-md-6">
-                                {{ form.pessoa.errors }}
-                                <label><strong>Pessoa: </strong></label>
-                                {{ form.pessoa|add_class:"form-control" }}
-                            </div>
-                            <div class="col-md-4">
-                                {{ form.nome_servico.errors }}
-                                <label><strong>Serviço: </strong></label>
-                                {{ form.nome_servico|add_class:'form-control' }}
-                            </div>
-                            <div class="col-md-2">
-                                {{ form.data_servico.errors }}
-                                <label><strong>Data: </strong></label>
-                                {{ form.data_servico|add_class:'form-control' }}
-                            </div>
-                            <div class="col-md-12 mt-3">
-                                {{ form.descricao.errors }}
-                                <label><strong>Descrição: </strong></label>
-                                {{ form.descricao|add_class:'form-control' }}
-                            </div>
-                    </div>
 
+        <div class="card-body p-4">
+            <form method="post" id="servicoForm" data-propriedades-url="{% url 'servicos:ajax_load_propriedades' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="p-4 mb-4 bg-light rounded-lg border-0 shadow-sm">
+                    <p class="section-title mb-3"><i class="fa fa-id-card"></i> Identificação</p>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label><strong>Pessoa</strong></label>
+                            {{ form.pessoa|add_class:"form-control shadow-sm"|attr:"id:id_pessoa" }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label><strong>Propriedade Relacionada</strong></label>
+                            {{ form.propriedade|add_class:"form-control shadow-sm"|attr:"id:id_propriedade" }}
                         </div>
                     </div>
                 </div>
-                
-                <div class="container">
 
-
-                <br>
-                <div class="container">
-                    <div class="p-1 mb-2 bg-light text-dark">
-                        <div class="form-row">
-                            <div class="col-md-12">
-                               <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-primary">Voltar</a>
-                               <button type="submit" class="btn btn-success">Salvar</button>
-                            </div>
+                <div class="p-4 mb-4 bg-white rounded-lg border shadow-sm">
+                    <p class="section-title mb-3"><i class="fa fa-info-circle"></i> Detalhes do Serviço</p>
+                    <div class="form-row">
+                        <div class="col-md-5 mb-3">
+                            <label><strong>Tipo de Serviço</strong></label>
+                            {{ form.nome_servico|add_class:"form-control shadow-sm" }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label><strong>Status</strong></label>
+                            {{ form.status|add_class:"form-control shadow-sm" }}
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label><strong>Data da Execução</strong></label>
+                            {{ form.data_servico|add_class:"form-control shadow-sm" }}
                         </div>
                     </div>
+                    <div class="form-row mt-2">
+                        <div class="col-md-12">
+                            <label><strong>Descrição / Observações</strong></label>
+                            {{ form.descricao|add_class:"form-control shadow-sm"|attr:"rows:4" }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-start mt-4">
+                    <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-secondary btn-custom mr-3 shadow-sm">
+                        <i class="fa fa-arrow-left"></i> Voltar
+                    </a>
+                    <button type="submit" class="btn btn-success btn-custom shadow-sm">
+                        <i class="fa fa-check-circle"></i> Salvar Registro
+                    </button>
                 </div>
             </form>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" ></script>
-</body>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<script>
+    // Esta função verifica a cada 100ms se o jQuery já existe na página
+    var checkJquery = setInterval(function() {
+        if (window.jQuery) {
+            clearInterval(checkJquery);
+            
+            // Agora que o jQuery existe, carregamos o JS do Select2 dinamicamente
+            $.getScript("https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js", function() {
+                
+                console.log("jQuery e Select2 prontos!");
+
+                // Inicializa o Select2
+                $('#id_pessoa').select2({
+                    placeholder: "Pesquise por nome...",
+                    allowClear: true,
+                    width: '100%'
+                });
+
+                // Lógica AJAX
+                $('#id_pessoa').on('change', function() {
+                    var pessoaId = $(this).val();
+                    var url = $("#servicoForm").attr("data-propriedades-url");
+                    if (pessoaId) {
+                        $.ajax({
+                            url: url,
+                            data: { 'pessoa_id': pessoaId },
+                            success: function(data) {
+                                $("#id_propriedade").html(data);
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    }, 100);
+</script>
 {% endblock conteudo %}

@@ -1,6 +1,6 @@
 from django.contrib import messages
-
-from django.shortcuts import redirect, redirect, render
+from apps.pessoas.models import Propriedade
+from django.shortcuts import get_object_or_404, redirect, redirect, render
 from .forms import ServicoForm
 from apps.pessoas.models import Pessoa
 from apps.servicos.models import Servico
@@ -21,17 +21,21 @@ def inserir_servico(request):
 def listar_servicos(request):
     template_name = 'servicos/listar_servicos.html'
     servicos = Servico.objects.select_related('propriedade__pessoa').all().order_by('-data_servico', '-id')
+
     return render(request, template_name, {'servicos': servicos})
 
 def editar_servico(request, id):
     template_name = 'servicos/form_servico.html'
-    servico = Servico.objects.get(id=id)
+    servico = get_object_or_404(Servico, id=id) # Use get_object_or_404 por segurança
     form = ServicoForm(request.POST or None, request.FILES or None, instance=servico)
+    
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Os dados foram atualizados com sucesso.')
+            return redirect('servicos:listar_servicos') # Ou detalhe_pessoa
+            
     context = {'form': form}
-    if form.is_valid():
-        form.save()
-        messages.success(request, 'Os dados foram atualizados com sucesso.')
-        return redirect('core:index')
     return render(request, template_name, context)
 
 def excluir_servico(request, id):
@@ -49,3 +53,22 @@ def detalhe_servico(request, id):
     servico = Servico.objects.get(id=id)
     context = {'servico': servico}
     return render(request, template_name, context)
+
+def load_propriedades(request):
+    pessoa_id = request.GET.get('pessoa_id')
+    propriedades = Propriedade.objects.filter(pessoa_id=pessoa_id).order_by('nome_propriedade')
+    return render(request, 'servicos/dropdown_propriedades_options.html', {'propriedades': propriedades})
+
+from datetime import date
+
+def alternar_status(request, id):
+    servico = get_object_or_404(Servico, id=id)
+    if servico.status == "Pendente":
+        servico.status = "Concluído"
+        servico.data_conclusao = date.today() # Define a data de completação hoje
+    else:
+        servico.status = "Pendente"
+        servico.data_conclusao = None # Limpa se voltar para pendente
+    
+    servico.save()
+    return redirect('servicos:listar_servicos')

@@ -10,4 +10,6 @@ urlpatterns = [
     path('editar_servico/<int:id>/', views.editar_servico, name='editar_servico'),
     path('excluir_servico/<int:id>/', views.excluir_servico, name='excluir_servico'),
     path('detalhe_servico/<int:id>/', views.detalhe_servico, name='detalhe_servico'),
+    path('ajax/load-propriedades/', views.load_propriedades, name='ajax_load_propriedades'),
+    path('status/<int:id>/', views.alternar_status, name='alternar_status'),
 ]
