@@ -4,113 +4,180 @@
 {% block titulo %}- Relatórios Estatísticos{% endblock titulo %}
 
 {% block conteudo %}
-<div class="content-wrapper">
-    <div class="container-fluid">
+<style>
+    /* ESTILIZAÇÃO PADRÃO */
+    .card { border-radius: 15px !important; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: all 0.3s ease; background-color: #fff; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important; }
+    .card-header { background-color: #f1f1f1 !important; border-bottom: 1px solid #e3e6f0 !important; border-top-left-radius: 15px !important; border-top-right-radius: 15px !important; padding: 15px 20px; font-weight: bold; color: #333; }
+    .breadcrumb { border-radius: 12px; background-color: #f8f9fc; border: 1px solid #e3e6f0; }
+    .btn { border-radius: 10px !important; font-weight: 600; transition: all 0.2s; }
+    
+    /* Indicador de Filtro Ativo */
+    .filter-indicator { background: #e3f2fd; border: 1px solid #2196f3; color: #0d47a1; border-radius: 30px; padding: 5px 20px; font-size: 0.9rem; display: inline-block; }
+</style>
 
-        <div class="card-header mt-3">
-            <h2>
-                <i class="fa fa-bar-chart"></i>
-                 Relatórios Estatísticos
+<div class="content-wrapper">
+    <div class="container-fluid py-4">
+
+        <div class="card-header d-flex align-items-center justify-content-between mb-3">
+            <h2 class="text-dark font-weight-bold mb-0">
+                <i class="fa fa-bar-chart text-primary"></i> Relatórios Estatísticos
             </h2>
+            {% if request.GET.localidade %}
+                <div class="filter-indicator">
+                    <i class="fa fa-filter"></i> Filtrado por: <strong>{{ localidade_nome_exibicao }}</strong>
+                    <a href="{% url 'core:relatorios' %}" class="ml-2 text-danger" title="Remover filtro"><i class="fa fa-times-circle"></i></a>
+                </div>
+            {% endif %}
         </div>
 
-        <!-- Breadcrumb -->
-        <ol class="breadcrumb m-13 p-3 mt-4">
-            <li class="breadcrumb-item">
-                <a href="{% url 'core:index' %}">Home</a>
-            </li>
-            <li class="breadcrumb-item">
-                 
-                <a href="{% url 'core:relatorio' %}">Relatórios</a>
-            </li>
+        <ol class="breadcrumb p-3 shadow-sm">
+            <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'core:relatorios' %}">Painel de Performance</a></li>
         </ol>
 
+        <div class="card mb-4 shadow-sm" style="border-top: 4px solid #4e73df;">
+            <div class="card-body">
+                <form method="GET" action="." class="row align-items-end">
+                    <div class="col-md-9">
+                        <label class="small font-weight-bold text-muted">Região / Localidade</label>
+                        <select name="localidade" class="form-control shadow-sm">
+                            <option value="">Todas as Localidades (Visão Geral)</option>
+                            {% for valor, label in lista_localidades_choices %}
+                                <option value="{{ valor }}" {% if request.GET.localidade == valor %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary btn-block shadow-sm">
+                            <i class="fa fa-refresh"></i> Atualizar Painel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="row">
-
             <div class="col-sm-4 mb-3">
-                <div class="card h-100 border-success">
-                    <div class="card-header bg-success text-white">
-                        <i class="fa fa-calendar"></i> Serviços no Mês Atual
-                    </div>
-                    <div class="card-body text-center">
-                        <h1>{{ total_mes }}</h1>
-                        <p class="text-muted">Total realizados este mês</p>
+                <div class="card h-100">
+                    <div class="card-header"><i class="fa fa-check-circle text-success"></i> Realizados (Mês)</div>
+                    <div class="card-body text-center py-4">
+                        <h1 class="display-4 font-weight-bold text-success mb-0">{{ total_mes }}</h1>
+                        <p class="text-muted ">{% if localidade_nome_exibicao %}Em {{ localidade_nome_exibicao }}{% else %}Serviços Realizados{% endif %}</p>
                     </div>
                 </div>
             </div>
-
             <div class="col-sm-4 mb-3">
-                <div class="card h-100 border-secondary">
-                    <div class="card-header bg-secondary text-white">
-                        <i class="fa fa-history"></i> Mês Anterior
-                    </div>
-                    <div class="card-body text-center">
-                        <h1>{{ total_mes_anterior }}</h1>
-                        <p class="text-muted">Total realizados no mês passado</p>
+                <div class="card h-100">
+                    <div class="card-header"><i class="fa fa-clock-o text-warning"></i> Aguardando Execução</div>
+                    <div class="card-body text-center py-4">
+                        <h1 class="display-4 font-weight-bold text-warning mb-0">{{ total_pendentes }}</h1>
+                        <p class="text-muted">Serviços Pendentes</p>
                     </div>
                 </div>
             </div>
-
             <div class="col-sm-4 mb-3">
-                <div class="card h-100 border-info">
-                    <div class="card-header bg-info text-white">
-                        <i class="fa fa-line-chart"></i> Crescimento
-                    </div>
-                    <div class="card-body text-center">
-                        {% if total_mes_anterior > 0 %}
-                            <h1>
-                                {{ total_mes|add:"-total_mes_anterior" }}
-                            </h1>
-                        {% else %}
-                            <h1>-</h1>
-                        {% endif %}
-                        <p class="text-muted">Diferença entre os meses</p>
+                <div class="card h-100">
+                    <div class="card-header"><i class="fa fa-users text-info"></i> Total Realizado</div>
+                    <div class="card-body text-center py-4">
+                        <h1 class="display-4 font-weight-bold text-info mb-0">{{ total_servicos_filtrados }}</h1>
+                        <p class="text-muted">Acumulado {% if localidade_nome_exibicao %}na região{% else %}geral{% endif %}</p>
                     </div>
                 </div>
-            </div>
-
-        </div>
-
-
-        <div class="card mt-4">
-            <div class="card-header bg-light">
-                <i class="fa fa-area-chart"></i>
-                Evolução dos Últimos 6 Meses
-            </div>
-            <div class="card-body">
-                <canvas id="graficoServicos"></canvas>
             </div>
         </div>
 
-
-        <div class="card mt-4 mb-5">
-            <div class="card-header bg-light">
-                <i class="fa fa-trophy"></i>
-                Serviços Mais Realizados
+        <div class="card mt-4 shadow-sm">
+            <div class="card-header"><i class="fa fa-area-chart text-primary"></i> {{ titulo_painel }}</div>
+            <div class="card-body p-4">
+                <div style="height: 300px;">
+                    <canvas id="graficoServicos"></canvas>
+                </div>
             </div>
-            <div class="card-body">
-                <table class="table table-striped table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Serviço</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in ranking_servicos %}
-                        <tr>
-                            <td>{{ item.nome_servico }}</td>
-                            <td>{{ item.total }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="2" class="text-center">
-                                Nenhum serviço registrado
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header"><i class="fa fa-trophy text-warning"></i> Mais Solicitados</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped mb-0">
+                                <thead><tr><th>Serviço</th><th class="text-center">Total</th></tr></thead>
+                                <tbody>
+                                    {% for item in ranking_servicos %}
+                                    <tr>
+                                        <td class="small font-weight-bold text-muted">{{ item.nome_servico }}</td>
+                                        <td class="text-center"><span class="badge badge-primary badge-pill px-3">{{ item.total }}</span></td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="2" class="text-center py-4 text-muted">Nenhum serviço registrado</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header"><i class="fa fa-pie-chart text-info"></i> Distribuição por Localidade</div>
+                    <div class="card-body d-flex align-items-center justify-content-center">
+                        <canvas id="graficoDonut" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-2 mb-5 shadow-sm" style="border-top: 4px solid #f6c23e;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fa fa-list-ul text-warning"></i> {{ subtitulo_lista }}</span>
+                <span class="badge badge-warning">{{ total_pendentes }} pendentes</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="text-center">Pessoa</th>
+                                <th class="text-center">Serviço</th>
+                                <th class="text-center">Propriedade</th>
+                                <th class="text-center">Localidade</th>
+                                <th class="text-center">Situação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in servicos_pendentes %}
+                            <tr>
+                                <td class="align-middle font-weight-bold text-center"><a href="{% url 'pessoas:detalhe_pessoa' p.propriedade.pessoa.id%}"class="font-weight-bold text-dark">{{ p.propriedade.pessoa.nome }}</a></td>
+                                <td class="align-middle text-center"><span class="text-primary text-center"><a href="{% url 'servicos:detalhe_servico' p.id %}">{{ p.nome_servico }}</a></span></td>
+                                <td class="align-middle text-center"><i class="fa fa-map-marker"></i><a href="{% url 'pessoas:inserir_propriedade' p.propriedade.pessoa.id %}"> {{ p.propriedade.nome_propriedade }} </a></td>
+                                <td class="align-middle text-center">{{ p.propriedade.get_localidade_display }}</td>
+                                <td class="text-center">
+                                    <form method="POST" action="{% url 'servicos:alternar_status' p.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn">
+                                                <span class="badge badge-warning badge-status  text-dark">Pendente</span>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Não há serviços pendentes.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 card mb-5 p-3 shadow-sm">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-start" style="gap: 10px;">
+                <a href="{% url 'core:index' %}" class="btn btn-dark"><i class="fa fa-arrow-left"></i> Voltar</a>
+                <a href="{% url 'core:relatorio_excel' %}?localidade={{ request.GET.localidade }}" class="btn btn-success">
+                    <i class="fa fa-file-excel-o"></i> Exportar Excel
+                </a>
             </div>
         </div>
 
@@ -120,43 +187,90 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-let dados = JSON.parse('{{ grafico_dados|escapejs }}');
+    // ===============================
+    // DADOS SEGUROS VINDO DO BACKEND
+    // ===============================
 
-let ctx = document.getElementById('graficoServicos');
+    let dadosLinha = JSON.parse('{{ grafico_dados|default:"{\"labels\":[],\"valores\":[]}"|escapejs }}');
+    let dadosDonut = JSON.parse('{{ distribuicao_json|default:"[]"|escapejs }}');
 
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: dados.labels,
-        datasets: [{
-            label: 'Serviços realizados',
-            data: dados.valores,
-            borderWidth: 2,
-            fill: false
-        }]
-    },
-    options: {
+    // ===============================
+    // CONFIG PADRÃO PARA INTEIROS
+    // ===============================
+
+    const integerChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
             y: {
                 beginAtZero: true,
                 ticks: {
-                    precision: 0,   // 🔥 Remove casas decimais
-                    stepSize: 1     // 🔥 Incrementa de 1 em 1
+                    stepSize: 1,
+                    precision: 0,
+                    callback: function(value) {
+                        if (Number.isInteger(value)) { return value; }
+                    }
                 }
             }
+        },
+        plugins: { legend: { display: false } }
+    };
+
+    // ===============================
+    // GRÁFICO DE LINHA
+    // ===============================
+
+    new Chart(document.getElementById('graficoServicos'), {
+        type: 'line',
+        data: {
+            labels: dadosLinha.labels,
+            datasets: [{
+                label: 'Serviços Concluídos',
+                data: dadosLinha.valores,
+                borderColor: '#4e73df',
+                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: integerChartOptions
+    });
+
+    // ===============================
+    // GRÁFICO DONUT
+    // ===============================
+
+    new Chart(document.getElementById('graficoDonut'), {
+        type: 'doughnut',
+        data: {
+            labels: dadosDonut.map(item => item.label),
+            datasets: [{
+                data: dadosDonut.map(item => item.total),
+                backgroundColor: [
+                    '#4e73df',
+                    '#1cc88a',
+                    '#36b9cc',
+                    '#f6c23e',
+                    '#e74a3b',
+                    '#858796'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.label}: ${Math.round(context.raw)} serv.`;
+                        }
+                    }
+                }
+            },
+            cutout: '70%'
         }
-    }
-});
+    });
 </script>
-
-    <div class="col-12 card mb-3 p-3">
-        <div class="card-header">
-            <a href="{% url 'core:index' %}"><button class="btn btn-primary mr-2">Voltar</button></a>
-            <a href="{% url 'core:relatorio_excel' %}"><button class="btn btn-success">Gerar Excel</button></a>
-            
-        </div>
-    </div>
-
 {% endblock %}

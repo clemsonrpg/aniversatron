@@ -1,54 +1,101 @@
 {% extends 'base.html' %}
-
 {% load widget_tweaks %}
 
 {% block conteudo %}
-<div class="content-wrapper">
-    <div class="container-fluid">
+<style>
+    /* 1. SOMBRA AO PASSAR O MOUSE (HOVER) */
+    .card { 
+        border-radius: 15px !important; 
+        border: none; 
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05); 
+        transition: all 0.3s ease; /* Transição suave */
+    }
+    
+    .card:hover { 
+        transform: translateY(-5px); /* Sobe levemente */
+        box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important; /* Sombra mais intensa no hover */
+    }
 
-        <div class="card-header mt-3">
-            <h2><i class="fa fa-id-card-o"> </i> Sistema de Cadastro - Secretaria de Agricultura</h2>
+    .card-header { 
+        background-color: #f1f1f1 !important; 
+        border-bottom: 1px solid #edf2f9 !important;
+        font-weight: bold;
+        border-top-left-radius: 15px !important;
+        border-top-right-radius: 15px !important;
+    }
+
+    /* 2. MODAL DE ANIVERSÁRIO "MAIS BONITO" */
+    .aniversario-modal { 
+        border-radius: 20px; 
+        overflow: hidden; 
+        border: none; 
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+    }
+    
+    .modal-header-festive { 
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); 
+        color: white; 
+        padding: 30px;
+        text-align: center;
+        border: none;
+    }
+
+    .info-box {
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        padding: 20px;
+        text-align: left;
+    }
+
+    .btn-parabens {
+        border-radius: 12px;
+        font-weight: 700;
+        padding: 12px 30px;
+        letter-spacing: 0.5px;
+        transition: all 0.2s;
+    }
+
+    .btn-parabens:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    .breadcrumb { border-radius: 10px; background-color: #f8f7f7; }
+</style>
+
+<div class="content-wrapper">
+    <div class="container-fluid py-4">
+        <div class="card-header bg-transparent border-0 mb-3">
+            <h2 class="text-dark"><i class="fa fa-id-card-o"></i> Sistema de Cadastro - Secretaria de Agricultura</h2>
         </div>
-        <!-- Breadcrumb -->
-        <ol class="breadcrumb m-13 p-3 mt-4">
-            <li class="breadcrumb-item p-">
-                <a href="{% url 'core:index' %}">Home</a>
-            </li>
-            <li class="breadcrumb-item">
-                {% block bread %}{% endblock bread %}
-            </li>
+
+        <ol class="breadcrumb p-3">
+            <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+            <li class="breadcrumb-item active"></li>
         </ol>
 
-
         <div class="row">
-
             <div class="col-sm-3 mb-3">
                 <div class="card h-100">
-                    <div class="card-header">
-                        <i class="fa fa-user"></i> <strong>Pessoas</strong>
-                    </div>
+                    <div class="card-header"><i class="fa fa-user"></i> Pessoas</div>
                     <div class="card-body text-center">
-                        <h1>{{ total_pessoas }}</h1>
+                        <h1 class="display-4 font-weight-bold text-dark">{{ total_pessoas }}</h1>
                         <p class="text-muted">Pessoas Cadastradas</p>
-                        <a class="btn btn-success btn-sm"
-                           href="{% url 'pessoas:listar_pessoas' %}">
+                        <a class="btn btn-success btn-sm px-4" href="{% url 'pessoas:listar_pessoas' %}" style="border-radius: 8px;">
                             <i class="fa fa-plus"></i> Cadastrar
                         </a>
                     </div>
                 </div>
             </div>
 
-
             <div class="col-sm-3 mb-3">
                 <div class="card h-100">
-                    <div class="card-header">
-                        <i class="fa fa-list"></i> <strong>Serviços</strong>
-                    </div>
+                    <div class="card-header"><i class="fa fa-list"></i> Serviços</div>
                     <div class="card-body text-center">
-                        <h1>{{ total_servicos }}</h1>
-                        <p class="text-muted color:green">Serviços Realizados</p>
-                        <a class="btn btn-success btn-sm"
-                           href="{% url 'servicos:listar_servicos' %}">
+                        <h1 class="display-4 font-weight-bold text-dark">{{ total_servicos }}</h1>
+                        <p class="text-muted">Serviços Realizados</p>
+                        <a class="btn btn-success btn-sm px-4" href="{% url 'servicos:listar_servicos' %}" style="border-radius: 8px;">
                             <i class="fa fa-plus"></i> Inserir
                         </a>
                     </div>
@@ -57,166 +104,84 @@
 
             <div class="col-sm-3 mb-3">
                 <div class="card h-100">
-                    <div class="card-header">
-                        <i class="fa fa-bar-chart"></i> <strong>Relatórios</strong>
-                    </div>
+                    <div class="card-header"><i class="fa fa-bar-chart"></i> Relatórios</div>
                     <div class="card-body text-center">
-                        <h3 class="mt-3">Relatórios</h3>
-                        <p class="text-muted">Visualize os relatórios realizados nos últimos meses</p>
-                        <a class="btn btn-success btn-sm"
-                           href="{% url 'core:relatorio' %}">
-                            <i class="fa fa-plus"></i> Ver Relatórios
+                        <h1 class="mt-3 font-weight-bold mb-3">Estatísticas</h1>
+                        <p class="text-muted small">Visualize o desempenho dos últimos meses</p>
+                        <a class="btn btn-success btn-sm px-4" href="{% url 'core:relatorios' %}" style="border-radius: 8px;">
+                            <i class="fa fa-search"></i> Ver Relatórios
                         </a>
                     </div>
                 </div>
             </div>
 
             <div class="col-sm-3 mb-3">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <i class="fa fa-birthday-cake"></i><strong> Aniversariantes</strong>
+                <div class="card h-100 border-left-success" {% if lista_aniversariantes|length > 0 %}style="border-left: 5px solid #28a745 !important;"{% endif %}>
+                    <div class="card-header"><i class="fa fa-birthday-cake"></i> Aniversariantes</div>
+                    <div class="card-body text-center">
+                        <h1 class="display-4 font-weight-bold text-success">{{ lista_aniversariantes|length }}</h1>
+                        <p class="text-muted">{% if lista_aniversariantes|length == 1 %}Aniversariante hoje{% else %}Aniversariantes hoje{% endif %}</p>
+                        {% if lista_aniversariantes|length > 0 %}
+                            <button id="abrirAniversariantes" class="btn btn-success btn-sm px-4" style="border-radius: 8px;">Ver 🎉</button>
+                        {% endif %}
                     </div>
-                <div class="card-body text-center">
-                    <h1>{{ lista_aniversariantes|length }}</h1>
-
-                    {% if lista_aniversariantes|length == 1 %}
-                        <p class="text-muted">Aniversariante hoje</p>
-                    {% elif lista_aniversariantes|length > 1 %}
-                        <p class="text-muted">Aniversariantes hoje</p>
-                    {% else %}
-                        <p class="text-muted">Nenhum aniversariante hoje</p>
-                    {% endif %}
-
-                    {% if lista_aniversariantes|length > 0 %}
-                        <button id="abrirAniversariantes"
-                                class="btn btn-success btn-sm">
-                            Ver 🎉
-                        </button>
-                    {% endif %}
-                </div>
-                    
-                        
                 </div>
             </div>
         </div>    
-        
-        </div>
-
+    </div>
+</div>
 
 {% if lista_aniversariantes|length > 0 %}
+<div class="modal fade" id="aniversarioModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content aniversario-modal">
+            <div class="modal-header-festive">
+                <i class="fa fa-gift fa-3x mb-2"></i>
+                <h3 class="font-weight-bold mb-0">Aniversariante do dia!</h3>
+            </div>
+            <div class="modal-body text-center p-4">
+                <h2 id="nomePessoa" class="text-dark font-weight-bold mb-4 p-2"></h2>
+                
+                
+                <div class="info-box shadow-sm">
+                    <small class="text-uppercase font-weight-bold text-muted d-block mb-3" style="letter-spacing: 1px;">Dados para contato</small>
+                    <div class="mb-2"><i class="fa fa-envelope-o text-success mr-2"></i><strong>Email:</strong> <span id="emailPessoa"></span></div>
+                    <div class="mb-2"><i class="fa fa-phone text-success mr-2"></i><strong>Telefone:</strong> <span id="telefonePessoa"></span></div>
+                    <div class="mt-3 pt-3 border-top">
+                        <i class="fa fa-wrench text-muted mr-2"></i><strong>Último Serviço:</strong><br>
+                        <span id="servicoPessoa" class="text-success font-weight-bold"></span>
+                    </div>
 
-<div class="modal fade" id="aniversarioModal">
-<div class="modal-dialog modal-dialog-centered">
-<div class="modal-content aniversario-modal">
+                </div>
+                <div class="mt-4"><p id="idadePessoa" class="badge badge-success p-2 px-4 shadow-sm mb-2 mt-4" style="font-size: 1.1rem; border-radius: 30px;"></p></div>
+            </div>
 
-<div class="modal-header bg-success text-white border-radious-12">
-<h5>🎉 Aniversariante do Dia</h5>
-</div>
-
-<div class="modal-body text-center">
-
-<h3 id="nomePessoa"></h3>
-<p id="idadePessoa"></p>
-<div class="mt-3 text-center">
-    <span class="font-weight-bold">CONTATO:</span>
-</div>
-<div class="mt-2 text-center">
-
-    <div class="d-flex justify-content-center">
-        <span class="font-weight-bold mr-2">Email:</span>
-        <span id="emailPessoa"></span>
+            <div class="modal-footer justify-content-center border-0">
+                <button id="btnParabens" class="btn btn-success btn-parabens shadow" data-dismiss="modal">Fechar e Continuar 🎊</button>
+            </div>
+        </div>
     </div>
-
-    <div class="d-flex justify-content-center mt-2">
-        <span class="font-weight-bold mr-2">Telefone:</span>
-        <span id="telefonePessoa"></span>
-    </div>
-    <div class="d-flex justify-content-center mt-2 mb-4">
-        <span class="font-weight-bold mr-2">Ultimo Serviço Realizado:</span>
-        <span id="servicoPessoa"></span>
-    </div>
-
-
 </div>
-
-<div class="modal-footer justify-content-center">
-<button id="btnParabens" class="btn btn-success" data-dismiss="modal">
-Parabenizar 🎊
-</button>
-</div>
-
-</div>
-</div>
-</div>
-
-
-
-
-<style>
-.aniversario-modal {
-    border-radius: 12px;
-    border: 1px solid #28a745; /* outline definido */
-    box-shadow: 0 0px 20px rgba(40,167,69,0.3); /* brilho suave */
-    overflow: hidden;
-}
-
-.aniversario-modal .modal-header {
-    background: linear-gradient(45deg, #28a745, #218838);
-    border-bottom: none;
-}
-.nome-aniversariante {
-    font-weight: 600;
-    color: #28a745;
-}
-
-.idade-aniversariante {
-    font-size: 1.2rem;
-    font-weight: 500;
-    background: rgba(40,167,69,0.1);
-    display: inline-block;
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid #28a745;
-}
-</style>
-
-
-
-
 
 {{ lista_aniversariantes|json_script:"dadosAniversariantes" }}
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-
-    let aniversariantes = JSON.parse(
-        document.getElementById("dadosAniversariantes").textContent
-    );
-
-    if(aniversariantes.length === 0) return;
-
+    let aniversariantes = JSON.parse(document.getElementById("dadosAniversariantes").textContent);
     let hoje = new Date().toISOString().split('T')[0];
     let chave = "aniversario_visto_" + hoje;
-
     let index = 0;
     let modal = $('#aniversarioModal');
 
     function mostrarPessoa(){
-
-        if(index >= aniversariantes.length){
-            return;
-        }
-
+        if(index >= aniversariantes.length) return;
         let pessoa = aniversariantes[index];
-
         document.getElementById("nomePessoa").innerText = pessoa.nome;
-        document.getElementById("idadePessoa").innerText = pessoa.idade + " anos 🎂";
-        document.getElementById("emailPessoa").innerText = pessoa.email;
-        document.getElementById("telefonePessoa").innerText = pessoa.telefone;
-        document.getElementById("servicoPessoa").innerText = pessoa.servico;
-
+        document.getElementById("idadePessoa").innerText = pessoa.idade + " anos hoje! 🎂";
+        document.getElementById("emailPessoa").innerText = pessoa.email || "Não informado";
+        document.getElementById("telefonePessoa").innerText = pessoa.telefone || "Não informado";
+        document.getElementById("servicoPessoa").innerText = pessoa.servico || "Nenhum registrado";
         modal.modal('show');
     }
-
 
     if(!localStorage.getItem(chave)){
         mostrarPessoa();
@@ -225,23 +190,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
     modal.on('hidden.bs.modal', function(){
         index++;
-        mostrarPessoa();
+        if(index < aniversariantes.length) {
+            setTimeout(mostrarPessoa, 300); // Pequeno delay para a troca
+        }
     });
 
-
-    document.getElementById("abrirAniversariantes")
-        ?.addEventListener("click", function(){
-            index = 0;
-            mostrarPessoa();
-        });
-
+    document.getElementById("abrirAniversariantes")?.addEventListener("click", function(){
+        index = 0;
+        mostrarPessoa();
+    });
 });
 </script>
 {% endif %}
-
-
-
-
 {% endblock conteudo %}
-
-

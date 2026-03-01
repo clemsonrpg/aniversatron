@@ -4,83 +4,116 @@
 {% block titulo %}- Cadastro de Propriedades{% endblock titulo %}
 
 {% block conteudo %}
+<style>
+    /* PADRONIZAÇÃO VISUAL */
+    .card-custom { 
+        border-radius: 15px; 
+        border: none; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+    }
 
-<div class="card">
-    <div class="card-header">
-        <h3>
-            <i class="fa fa-home"></i>
-            Cadastro de Propriedades - {{ pessoa.nome }}
-        </h3>
-        {% include 'partials/messages.html' %}
-    </div>
+    .card-header-custom {
+        background-color: #f1f1f1 !important;
+        border-radius: 15px 15px 0 0 !important;
+        border-bottom: 1px solid #e3e6f0;
+    }
 
-    <div class="card-body">
+    .form-control {
+        height: 46px !important;
+        border-radius: 8px !important;
+        border: 1px solid #d1d3e2 !important;
+    }
 
-        <form method="post">
-            {% csrf_token %}
-            {{ formset.management_form }}
+    .btn-custom { 
+        border-radius: 10px; 
+        font-weight: 600; 
+        transition: all 0.2s;
+    }
 
-            <div id="formset-container">
-                {% for form in formset %}
-                <div class="form-row border rounded p-3 mb-3 propriedade-form bg-light">
-                    {{ form.id }}
-                    
-                    <div class="col-md-5">
-                        <label><strong>Nome da Propriedade</strong></label>
-                        {{ form.nome_propriedade|add_class:"form-control" }}
+    .btn-custom:hover { transform: translateY(-1px); }
+
+    .propriedade-form {
+        transition: all 0.3s ease;
+        border: 1px solid #e3e6f0 !important;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="card card-custom">
+        <div class="card-header py-3 card-header-custom">
+            <h3 class="m-0 text-dark font-weight-bold h5">
+                <i class="fa fa-home text-success"></i>
+                Cadastro de Propriedades - {{ pessoa.nome }}
+            </h3>
+        </div>
+
+        <div class="card-body p-4">
+            {% include 'partials/messages.html' %}
+
+            <form method="post">
+                {% csrf_token %}
+                {{ formset.management_form }}
+
+                <div id="formset-container">
+                    {% for form in formset %}
+                    <div class="form-row border rounded-lg p-3 mb-3 propriedade-form bg-light shadow-sm">
+                        {{ form.id }}
+                        
+                        <div class="col-md-5 mb-2">
+                            <label class="text-dark small font-weight-bold">Nome da Propriedade</label>
+                            {{ form.nome_propriedade|add_class:"form-control" }}
+                        </div>
+
+                        <div class="col-md-5 mb-2">
+                            <label class="text-dark small font-weight-bold">Localidade</label>
+                            {{ form.localidade|add_class:"form-control" }}
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-end mb-2">
+                            <div class="d-none">{{ form.DELETE }}</div>
+                            <button type="button" class="btn btn-outline-danger btn-remover w-100 btn-custom">
+                                <i class="fa fa-trash"></i> Remover
+                            </button>
+                        </div>
                     </div>
-
-                    <div class="col-md-5">
-                        <label><strong>Localidade</strong></label>
-                        {{ form.localidade|add_class:"form-control" }}
-                    </div>
-
-                    <div class="col-md-2 d-flex align-items-end">
-                        <div class="d-none">{{ form.DELETE }}</div>
-                        <button type="button" class="btn btn-outline-danger btn-remover w-100">
-                            <i class="fa fa-trash"></i> Remover
-                        </button>
-                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
 
-            <div class="mb-3">
-                <button type="button" id="add-form" class="btn btn-primary">
-                    <i class="fa fa-plus"></i> Adicionar Propriedade
-                </button>
-            </div>
+                <div class="mb-4">
+                    <button type="button" id="add-form" class="btn btn-outline-primary btn-custom shadow-sm">
+                        <i class="fa fa-plus"></i> Adicionar Outra Propriedade
+                    </button>
+                </div>
 
-            <hr>
+                <hr class="my-4">
 
-            <div class="d-flex justify-content-start mt-3" style="gap: 10px;">
-                <a href="{% url 'pessoas:listar_pessoas' %}" class="btn btn-primary">
-                    Voltar
-                </a>
-                <button type="submit" class="btn btn-success">
-                    <i class="fa fa-save"></i> Salvar Propriedades
-                </button>
-            </div>
-
-        </form>
-
+                <div class="d-flex justify-content-start" style="gap: 15px;">
+                    <a href="javascript:history.back()" class="btn btn-dark btn-custom px-4 shadow-sm">
+                        <i class="fa fa-arrow-left"></i> Voltar
+                    </a>
+                    <button type="submit" class="btn btn-success btn-custom px-5 shadow-sm">
+                        <i class="fa fa-save"></i> Salvar Propriedades
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
 <div id="empty-form" class="d-none">
-    <div class="form-row border rounded p-3 mb-3 propriedade-form bg-light">
-        <div class="col-md-5">
-            <label><strong>Nome da Propriedade</strong></label>
+    <div class="form-row border rounded-lg p-3 mb-3 propriedade-form bg-light shadow-sm">
+        <div class="col-md-5 mb-2">
+            <label class="text-dark small font-weight-bold">Nome da Propriedade</label>
             {{ formset.empty_form.nome_propriedade|add_class:"form-control" }}
         </div>
 
-        <div class="col-md-5">
-            <label><strong>Localidade</strong></label>
+        <div class="col-md-5 mb-2">
+            <label class="text-dark small font-weight-bold">Localidade</label>
             {{ formset.empty_form.localidade|add_class:"form-control" }}
         </div>
 
-        <div class="col-md-2 d-flex align-items-end">
-            <button type="button" class="btn btn-outline-danger btn-remover w-100">
+        <div class="col-md-2 d-flex align-items-end mb-2">
+            <button type="button" class="btn btn-outline-danger btn-remover w-100 btn-custom">
                 <i class="fa fa-trash"></i> Remover
             </button>
         </div>
@@ -91,18 +124,17 @@
 document.addEventListener("DOMContentLoaded", function () {
     const container = document.getElementById("formset-container");
     const addButton = document.getElementById("add-form");
-    // O prefixo 'propriedades' é gerado pelo related_name no seu model
-    const totalForms = document.getElementById("id_propriedades-TOTAL_FORMS");
+    const totalForms = document.querySelector("input[id$='-TOTAL_FORMS']");
 
     function atualizarBotoes() {
         const formsVisiveis = container.querySelectorAll(".propriedade-form:not([style*='display: none'])");
         container.querySelectorAll(".btn-remover").forEach(btn => {
             if (formsVisiveis.length <= 1) {
                 btn.disabled = true;
-                btn.classList.add("disabled");
+                btn.classList.add("disabled", "opacity-50");
             } else {
                 btn.disabled = false;
-                btn.classList.remove("disabled");
+                btn.classList.remove("disabled", "opacity-50");
             }
         });
     }
@@ -131,7 +163,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const forms = container.querySelectorAll(".propriedade-form");
                 totalForms.value = forms.length;
                 
-                // Reindexação necessária para o Django não se perder
                 Array.from(container.querySelectorAll(".propriedade-form")).forEach((form, index) => {
                     form.querySelectorAll("input, select").forEach(input => {
                         const name = input.getAttribute("name");
@@ -148,5 +179,4 @@ document.addEventListener("DOMContentLoaded", function () {
     atualizarBotoes();
 });
 </script>
-
 {% endblock conteudo %}

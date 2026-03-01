@@ -5,148 +5,124 @@
 
 {% block conteudo %}
 <style>
-
-    /* 1. Padronização Geral (Pessoa, Propriedade, Inputs) */
+    /* 1. PADRONIZAÇÃO ABSOLUTA (Pessoa e Propriedade) */
     .form-control, 
     select.form-control,
     .select2-container--default .select2-selection--single {
-        height: 40px !important; /* Altura um pouco mais compacta e elegante */
-        border-radius: 6px !important; /* Menos redondo, mais quadrado profissional */
-        border: 1px solid #d1d3e2 !important; /* Cor cinza neutra */
-        background-color: #fff !important;
+        height: 46px !important;
+        border-radius: 8px !important;
+        border: 1px solid #d1d3e2 !important;
+        background-color: #ffffff !important;
+        color: #3a3b45 !important;
+        font-size: 0.95rem !important;
         width: 100% !important;
         display: flex !important;
         align-items: center !important;
-    }
-
-    /* 2. Ajuste do Select2 (Pessoa) */
-    .select2-container--default .select2-selection--single {
-        padding: 0 10px !important;
+        padding-left: 12px !important;
+        transition: all 0.2s ease-in-out !important;
         
+        /* Remove a seta nativa do navegador para o campo da DIREITA */
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        
+        /* Injeta a mesma seta customizada em AMBOS */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23858796' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 12px center !important;
+        background-size: 16px !important;
     }
 
-    /* Texto dentro do campo */
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 38px !important; /* Alinha com a altura de 40px */
-        color: #495057 !important;
-        font-size: 0.95rem;
-        padding-left: 0 !important;
-    }
-
-    /* Seta de seleção (ajustada para não ficar no topo) */
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 38px !important;
-        right: 8px !important;
-    }
-
-    /* 3. A Caixa de Busca (Dropdown) - Estilo Clean */
-    .select2-dropdown {
-        border-radius: 6px !important;
-        border: 1px solid #d1d3e2 !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-    }
-
-    /* Cor de quando você passa o mouse nas opções da lista */
-    .select2-container--default .select2-results__option--highlighted[aria-selected] {
-        background-color: #4e73df !important; /* Azul padrão */
-        color: white !important;
-    }
-
-    /* Cor da opção que já está selecionada */
-    .select2-container--default .select2-results__option[aria-selected=true] {
-        background-color: #f8f9fc !important;
-        color: #2e59d9 !important;
-    }
-
-    /* 4. Foco (Clique no campo) */
-    .form-control:focus,
-    .select2-container--default.select2-container--focus .select2-selection--single {
-        border-color: #bac8f3 !important; /* Azul clarinho na borda */
-        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.1) !important;
+    /* 2. RESOLVE O BUG DO ARREDONDAMENTO (Trava os 8px em qualquer estado) */
+    .select2-container--default .select2-selection--single,
+    .select2-container--default:hover .select2-selection--single,
+    .select2-container--open .select2-selection--single,
+    .select2-container--focus .select2-selection--single,
+    .form-control:hover,
+    .form-control:focus {
+        border-radius: 8px !important; /* Aqui mata o bug de ficar quadrado */
         outline: none !important;
     }
 
+    /* 3. FOCO E SELEÇÃO (Destaque sutil) */
+    .form-control:focus,
+    .select2-container--open .select2-selection--single {
+        border-color: #4e73df !important;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.1) !important;
+    }
 
-    /* Estilo do Charme */
-    .card-custom {
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    /* 4. AJUSTES DO SELECT2 (PESSOA) */
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        display: none !important; /* Esconde a seta padrão feia do plugin */
     }
-    .rounded-lg {
-        border-radius: 12px !important;
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #3a3b45 !important;
+        font-weight: 700 !important;
+        line-height: 44px !important;
+        padding-left: 0 !important;
     }
-    .form-control {
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        transition: all 0.3s;
-    }
-    .form-control:focus {
-        border-color: #4e73df;
-        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.1);
-    }
-    .section-title {
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #000000;
+
+    /* Ajuste do botão de limpar (X) */
+    .select2-container--default .select2-selection--single .select2-selection__clear {
+        margin-right: 30px !important; /* Afasta da nossa nova seta */
+        color: #e74a3b !important;
         font-weight: bold;
     }
-    .btn-custom {
-        border-radius: 10px;
-        padding: 10px 25px;
-        font-weight: 600;
-        transition: transform 0.2s;
+
+    /* 5. DROPDOWN (LISTA DE OPÇÕES) */
+    .select2-dropdown {
+        border-radius: 8px !important;
+        border: 1px solid #d1d3e2 !important;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+        overflow: hidden; /* Garante que os itens respeitem o arredondamento */
     }
+
+    /* Item que você está passando o mouse */
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #f8f9fc !important;
+        color: #4e73df !important;
+    }
+
+    /* 6. CORREÇÃO ESPECÍFICA PARA O SELECT DA DIREITA */
+    select.form-control {
+        cursor: pointer;
+        padding-right: 40px !important; /* Espaço para a seta */
+    }
+
+    /* Estilos de Layout */
+    .card-custom { border-radius: 15px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .section-title { font-size: 0.85rem; text-transform: uppercase; color: #5a5c69; font-weight: bold; }
+    .btn-custom { border-radius: 10px; padding: 10px 25px; font-weight: 600; }
     .btn-custom:hover {
         transform: translateY(-2px);
     }
-</style>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<style>
-    /* Ajuste para o Select2 seguir o seu estilo "Charme" */
-    .select2-container--default .select2-selection--single {
-        height: calc(1.5 em + .75 rem + 4px); /* Altura padrão do Bootstrap */
-        border-radius: 8px !important;
-        border: 1px solid #ddd !important;
-        padding: 5px;
-    }
-    .select2-container .select2-selection--single .select2-selection__rendered {
-        padding-top: 2px;
-    }
-    .select2-dropdown {
-        border-radius: 12px !important;
-        border: 1px solid #ddd !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
 </style>
-
 
 <div class="container-fluid py-4">
     <div class="card card-custom">
-        <div class="card-header bg-white py-3">
-            <h2 class="m-0 text-dark">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h2 class="m-0 text-dark font-weight-bold">
                 <i class="fa fa-pencil-square-o"></i> 
                 {% if form.instance.id %}Editar{% else %}Inserir{% endif %} Serviço
             </h2>
-            {% include 'partials/messages.html' %}
         </div>
 
         <div class="card-body p-4">
             <form method="post" id="servicoForm" data-propriedades-url="{% url 'servicos:ajax_load_propriedades' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                <div class="p-4 mb-4 bg-light rounded-lg border-0 shadow-sm">
+                <div class="p-4 mb-4 bg-light rounded-lg border">
                     <p class="section-title mb-3"><i class="fa fa-id-card"></i> Identificação</p>
                     <div class="form-row">
                         <div class="col-md-6 mb-3">
-                            <label><strong>Pessoa</strong></label>
-                            {{ form.pessoa|add_class:"form-control shadow-sm"|attr:"id:id_pessoa" }}
+                            <label class="text-dark"><strong>Pessoa</strong></label>
+                            {{ form.pessoa|add_class:"form-control"|attr:"id:id_pessoa" }}
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label><strong>Propriedade Relacionada</strong></label>
-                            {{ form.propriedade|add_class:"form-control shadow-sm"|attr:"id:id_propriedade" }}
+                            <label class="text-dark"><strong>Propriedade Relacionada</strong></label>
+                            {{ form.propriedade|add_class:"form-control"|attr:"id:id_propriedade" }}
                         </div>
                     </div>
                 </div>
@@ -155,31 +131,31 @@
                     <p class="section-title mb-3"><i class="fa fa-info-circle"></i> Detalhes do Serviço</p>
                     <div class="form-row">
                         <div class="col-md-5 mb-3">
-                            <label><strong>Tipo de Serviço</strong></label>
-                            {{ form.nome_servico|add_class:"form-control shadow-sm" }}
+                            <label class="text-dark"><strong>Tipo de Serviço</strong></label>
+                            {{ form.nome_servico|add_class:"form-control" }}
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label><strong>Status</strong></label>
-                            {{ form.status|add_class:"form-control shadow-sm" }}
+                            <label class="text-dark"><strong>Status</strong></strong></label>
+                            {{ form.status|add_class:"form-control" }}
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label><strong>Data da Execução</strong></label>
-                            {{ form.data_servico|add_class:"form-control shadow-sm" }}
+                            <label class="text-dark"><strong>Data da Execução</strong></label>
+                            {{ form.data_servico|add_class:"form-control"|attr:"type:date" }}
                         </div>
                     </div>
                     <div class="form-row mt-2">
                         <div class="col-md-12">
-                            <label><strong>Descrição / Observações</strong></label>
-                            {{ form.descricao|add_class:"form-control shadow-sm"|attr:"rows:4" }}
+                            <label class="text-dark"><strong></strong>Descrição / Observações</strong></label>
+                            {{ form.descricao|add_class:"form-control"|attr:"rows:3" }}
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-start mt-4">
-                    <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-secondary btn-custom mr-3 shadow-sm">
+                    <a href="{% url 'servicos:listar_servicos' %}" class="btn btn-dark border btn-custom mr-3 shadow-sm ">
                         <i class="fa fa-arrow-left"></i> Voltar
                     </a>
-                    <button type="submit" class="btn btn-success btn-custom shadow-sm">
+                    <button type="submit" class="btn btn-success btn-custom shadow-sm px-5">
                         <i class="fa fa-check-circle"></i> Salvar Registro
                     </button>
                 </div>
@@ -189,26 +165,17 @@
 </div>
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
 <script>
-    // Esta função verifica a cada 100ms se o jQuery já existe na página
     var checkJquery = setInterval(function() {
         if (window.jQuery) {
             clearInterval(checkJquery);
-            
-            // Agora que o jQuery existe, carregamos o JS do Select2 dinamicamente
             $.getScript("https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js", function() {
-                
-                console.log("jQuery e Select2 prontos!");
-
-                // Inicializa o Select2
                 $('#id_pessoa').select2({
                     placeholder: "Pesquise por nome...",
                     allowClear: true,
                     width: '100%'
                 });
 
-                // Lógica AJAX
                 $('#id_pessoa').on('change', function() {
                     var pessoaId = $(this).val();
                     var url = $("#servicoForm").attr("data-propriedades-url");

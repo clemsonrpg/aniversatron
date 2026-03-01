@@ -5,26 +5,21 @@
 
 {% block conteudo %}
 <style>
+    /* AJUSTE DE SEGURANÇA PARA O HOVER NÃO VAZAR */
+    .table-responsive {
+        overflow-x: auto !important;
+        overflow-y: visible !important; /* Permite que o scale apareça */
+        padding: 15px !important; /* Espaço para a linha crescer */
+    }
+
     .card {
         border-radius: 15px;
         border: none;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-
-    .table-responsive {
-        overflow-x: hidden !important;
-        padding: 5px; 
-    }
     
-    .btn-custom {
-        border-radius: 10px;
-        padding: 10px 25px;
-        font-weight: 600;
-        transition: transform 0.2s;
-    }
-    .btn-custom:hover {
-        transform: translateY(-2px);
-    }
+    .btn-custom { border-radius: 10px; padding: 10px 25px; font-weight: 600; }
+    .btn-custom:hover { transform: translateY(-2px); }
 
     .table {
         border-collapse: separate;
@@ -37,7 +32,7 @@
         color: #000000 !important;
         border-bottom: 2px solid #e3e6f0 !important;
         text-transform: uppercase;
-        font-size: 0.9rem; /* Ajustado para caber melhor as novas colunas */
+        font-size: 0.9rem;
         font-weight: 700;
         letter-spacing: 0.5px;
         padding: 18px 10px !important;
@@ -50,12 +45,13 @@
     .table tbody tr {
         transition: all 0.2s ease-in-out;
         box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        position: relative; /* Para o z-index funcionar */
     }
 
     .table tbody tr:hover {
         transform: scale(1.01);
-        box-shadow: 0 5px 5px rgba(0,0,0,0.1) !important;
-        z-index: 5;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+        z-index: 99; /* Fica por cima das outras linhas */
         position: relative;
     }
 
@@ -65,36 +61,21 @@
         border: none !important;
     }
 
-    /* Estilo para as datas empilhadas */
-    .data-stack {
-        font-size: 0.8rem;
-        line-height: 1.2;
-    }
+    .data-stack { font-size: 0.8rem; line-height: 1.2; }
 
-    /* Botão de Status sem bordas de formulário */
-    .btn-status {
-        background: none;
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        transition: transform 0.2s;
-    }
+    .btn-status { background: none; border: none; padding: 0; cursor: pointer; transition: transform 0.2s; }
     .btn-status:hover { transform: scale(1.1); }
 
-    .badge-status {
-        border-radius: 20px;
-        padding: 6px 14px;
-        font-size: 0.75rem;
-    }
-    
-    .prop-link {
-        color: #5a5c69;
-        text-decoration: none;
-    }
-    .prop-link:hover {
-        color: #4e73df;
-        text-decoration: underline;
-    }
+    .badge-status { border-radius: 20px; padding: 6px 14px; font-size: 0.75rem; }
+    .breadcrumb { border-radius: 10px; background-color: #f8f7f7; }
+    .card-header { 
+        background-color: #f1f1f1 !important; 
+        border-bottom: 1px solid #edf2f9 !important;
+        font-weight: bold;
+        border-top-left-radius: 12px !important;
+        border-top-right-radius: 12px !important;
+        }
+
 </style>
 
 <div class="container-fluid">
@@ -105,20 +86,18 @@
     </div>
 
     <div class="card mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h2 class="m-0 text-dark"><i class="fa fa-list-alt"></i> Listagem de Serviços</h2>
-            <a href="{% url 'servicos:inserir_servico' %}" class="btn btn-success rounded-lg shadow-sm">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background-color: #f1f1f1;">
+            <h2 class="m-0 text-dark"><i class="fa fa-list-alt "></i> Listagem de Serviços</h2>
+            <a href="{% url 'servicos:inserir_servico' %}" class="btn btn-success btn-custom shadow-sm px-5">
                 <i class="fa fa-plus-circle"></i> Novo Serviço
             </a>
         </div>
         
         <div class="px-3 mt-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-light rounded-lg">
-                    <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
-                    <li class="breadcrumb-item active">Serviços</li>
-                </ol>
-            </nav>
+            <ol class="breadcrumb p-3 mt-4">
+                <li class="breadcrumb-item"><a href="{% url 'core:index' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'servicos:listar_servicos' %}">Serviços</a></li>
+            </ol>
         </div>
 
         <div class="card-body">
@@ -153,7 +132,6 @@
                                 <br><small class="text-muted">{{ a.propriedade.get_localidade_display }}</small>
                             </td>
                             <td class="text-center font-weight-bold">{{ a.nome_servico }}</td>
-                            
                             <td class="text-center">
                                 <form method="POST" action="{% url 'servicos:alternar_status' a.id %}">
                                     {% csrf_token %}
@@ -166,32 +144,20 @@
                                     </button>
                                 </form>
                             </td>
-
                             <td class="text-center">
                                 <div class="data-stack text-muted">
-                                    <div class="mt-1">
-                                        {% if a.status == "Concluído" %}
-                                            <i class="fa fa-calendar-check-o text-success"></i> 
-                                            Realizado: <b class="text-success">{{ a.data_servico|date:"d/m/y" }}</b>
-                                        {% else %}
-                                            <i class="fa fa-clock-o text-warning"></i> 
-                                            Previsão: <b class="text-dark">{{ a.data_servico|date:"d/m/y" }}</b>
-                                        {% endif %}
-                                    </div>
+                                    {% if a.status == "Concluído" %}
+                                        <i class="fa fa-calendar-check-o text-success"></i> <b class="text-success">{{ a.data_servico|date:"d/m/y" }}</b>
+                                    {% else %}
+                                        <i class="fa fa-clock-o text-warning"></i> <b class="text-dark">{{ a.data_servico|date:"d/m/y" }}</b>
+                                    {% endif %}
                                 </div>
                             </td>
-
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <a href="{% url 'servicos:detalhe_servico' a.id %}" class="btn btn-sm btn-light rounded-lg mr-1 text-primary border shadow-sm">
-                                        <i class="fa fa-search"></i>
-                                    </a>
-                                    <a href="{% url 'servicos:editar_servico' a.id %}" class="btn btn-sm btn-light rounded-lg mr-1 text-success border shadow-sm">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a href="{% url 'servicos:excluir_servico' a.id %}" class="btn btn-sm btn-light rounded-lg text-danger border shadow-sm">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
+                                    <a href="{% url 'servicos:detalhe_servico' a.id %}" class="btn btn-sm btn-light rounded-lg mr-1 text-primary border shadow-sm"><i class="fa fa-search"></i></a>
+                                    <a href="{% url 'servicos:editar_servico' a.id %}" class="btn btn-sm btn-light rounded-lg mr-1 text-success border shadow-sm"><i class="fa fa-pencil"></i></a>
+                                    <a href="{% url 'servicos:excluir_servico' a.id %}" class="btn btn-sm btn-light rounded-lg text-danger border shadow-sm"><i class="fa fa-trash"></i></a>
                                 </div>
                             </td>
                         </tr>
@@ -201,13 +167,10 @@
             </div>
         </div>
     </div>
-
     <div class="card p-3 mb-5 border-0 bg-transparent">
-        <div class="d-flex">
-            <a href="{% url 'core:index' %}" id="btn" class="btn btn-secondary btn-custom mr-3 shadow-sm">
-                <i class="fa fa-arrow-left"></i> Voltar
-            </a>
-        </div>
+        <a href="{% url 'core:index' %}" class="btn btn-dark border btn-custom mr-3 shadow-sm" style="width: fit-content;">
+            <i class="fa fa-arrow-left"></i> Voltar
+        </a>
     </div>
 </div>
 {% endblock conteudo %}

@@ -23,12 +23,26 @@ def listar_pessoas(request):
     template_name = 'pessoas/listar_pessoas.html'
 
     pessoas = Pessoa.objects.prefetch_related(
-        'propriedades__servicos'
+        Prefetch(
+            'propriedades__servicos',
+            queryset=Servico.objects.order_by('-id'),
+            to_attr='servicos_ordenados'
+        )
     )
+
+    # definir o último serviço global da pessoa
+    for pessoa in pessoas:
+        ultimo = None
+
+        for prop in pessoa.propriedades.all():
+            if hasattr(prop, 'servicos_ordenados') and prop.servicos_ordenados:
+                if not ultimo or prop.servicos_ordenados[0].id > ultimo.id:
+                    ultimo = prop.servicos_ordenados[0]
+
+        pessoa.ultimo_servico = ultimo
 
     context = {'pessoas': pessoas}
     return render(request, template_name, context)
-
 
 def editar_pessoa(request, id):
     template_name = 'pessoas/form_pessoa.html'

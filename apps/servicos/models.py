@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import date
 
-from apps.pessoas.models import Propriedade
+from apps.pessoas.models import Pessoa, Propriedade
 # Create your models here.
 class Servico(models.Model):
     nome_servico = models.CharField(max_length=100, choices=[
@@ -15,6 +15,15 @@ class Servico(models.Model):
         on_delete=models.CASCADE,
         related_name='servicos',
         null=True,
+        blank=True
+    )
+    
+    
+    pessoa = models.ForeignKey(
+        Pessoa, 
+        on_delete=models.CASCADE, 
+        related_name='servicos', 
+        null=True, 
         blank=True
     )
 
